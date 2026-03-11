@@ -20,7 +20,7 @@ import { MenuItem, MenuItemSchema, MenuItemDocument } from './menu/menu.schema';
     ]),
   ],
 })
-class SeedModule {}
+class SeedModule { }
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(SeedModule);
@@ -36,7 +36,7 @@ async function seed() {
     { name: 'โกโก้', price: 55, category: 'other' },
   ];
 
-  const count = await menuItemModel.countDocuments();
+  const count = await menuItemModel.countDocuments(); // ฮันแน่ idempotent seed — ปลอดภัยรันกี่ครั้งก็ได้
   if (count > 0) {
     console.log(`⚠️  Database already has ${count} menu items. Skipping seed.`);
   } else {
