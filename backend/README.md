@@ -1,98 +1,85 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Cafe Management System - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+โปรเจค Backend สำหรับระบบจัดการร้านคาเฟ่ พัฒนาด้วย NestJS และ MongoDB (Mongoose) เน้นความ Clean, Secure, และ Scalable เป็นหลัก
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## โครงสร้างโปรเจค
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+```
+backend/
+├── src/
+│   ├── main.ts              # จุดเริ่มต้นโปรเจค (CORS, ValidationPipe, Port)
+│   ├── app.module.ts        # Module หลัก (Config, Mongoose, Menu, Order)
+│   ├── menu/                # จัดการข้อมูลเมนู
+│   │   ├── menu.schema.ts   
+│   │   ├── menu.module.ts   
+│   │   ├── menu.service.ts  
+│   │   ├── menu.controller.ts
+│   │   └── dto/
+│   ├── order/               # จัดการข้อมูลออเดอร์
+│   │   ├── order.schema.ts  
+│   │   ├── order.module.ts  
+│   │   ├── order.service.ts 
+│   │   ├── order.controller.ts
+│   │   └── dto/
+│   └── seed.ts              # สคริปต์สำหรับเพิ่มข้อมูลเริ่มต้น
 ```
 
-## Compile and run the project
+## สถาปัตยกรรมและข้อกำหนด (Architecture Rules)
 
+โปรเจคนี้ถูกออกแบบตามข้อกำหนดอย่างเคร่งครัดดังนี้:
+1. **Thin Controller**: Controller จะทำหน้าที่รับ Request ส่งต่อให้ Service และคืน Response เท่านั้น จะไม่มี Logic ใดๆ ในชั้นนี้
+2. **Service Layer**: Business Logic ทั้งหมดถูกประมวลผลที่นี่ เช่น การอ้างอิงราคาจากฐานข้อมูล, การคำนวณราคารวม 
+3. **Data Validation (DTO)**: ทุก Request Body ต้องผ่าน ValidationPipe (class-validator) ถ้าข้อมูลไม่ตรงตามกำหนดจะถูกตีตก (400 Bad Request) ทันที
+4. **Server-side Price Calculation (Security)**: `totalPrice` ของออเดอร์จะต้องถูกคำนวณที่ฝั่ง Server เท่านั้น โดยดึงราคาจากฐานข้อมูล เพื่อป้องกันไม่ให้ผู้ใช้ส่งราคาปลอมแปลงมาได้
+5. **Price Snapshot**: เมื่อสร้างออเดอร์ ระบบจะทำการ snapshot ชื่อเมนูและราคา ณ เวลานั้นเก็บไว้ในออเดอร์ เพื่อโครงสร้างข้อมูลที่ถูกต้องแม้ว่าจะมีการปรับราคาเมนูในอนาคต
+
+## API Endpoints
+
+### Menu (เมนู)
+- `GET /menu` - แสดงรายการเมนูทั้งหมดที่เปิดขาย (isActive)
+- `POST /menu` - สร้างเมนูใหม่
+- `PATCH /menu/:id` - แก้ไขข้อมูลเมนู (เช่น ปิดการขาย)
+- `DELETE /menu/:id` - ลบเมนู
+
+### Order (ออเดอร์)
+- `POST /orders` - สร้างออเดอร์ใหม่ (รวมการคำนวณราคาสุทธิ)
+- `GET /orders` - แสดงรายการออเดอร์ทั้งหมดเรียงตามวันที่ลดหลั่นกัน
+- `GET /orders/summary` - ดึงข้อมูลสรุป (จำนวนออเดอร์ทั้งหมด, รายได้รวมทั้งหมด)
+
+## การติดตั้งและรันโปรเจค
+
+### ความต้องการของระบบ
+- Node.js (แนะนำ v18 ขึ้นไป)
+- MongoDB (Local หรือ Atlas)
+
+### วิธีการติดตั้ง
+
+1. ติดตั้ง Packages ทั้งหมด
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
+2. ตั้งค่าไฟล์ตัวแปรแวดล้อม (Environment Variables)
+คัดลอกไฟล์ `.env.example` มาเป็น `.env` และกำหนดค่า `MONGODB_URI` ของคุณ
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+*ตัวอย่างไฟล์ `.env`:*
+```env
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/cafe-db
+PORT=3001
+FRONTEND_URL=http://localhost:3000
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+3. เพิ่มข้อมูลตัวอย่าง (Seed Data)
+ให้รันคำสั่งด้านล่างนี้เพื่อสร้างเมนูตั้งต้น 5 รายการลงในฐานข้อมูล
+```bash
+npm run seed
+```
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+4. เริ่มสั่งรัน Server สำหรับทำ Development
+```bash
+npm run start:dev
+```
+Server จะเริ่มทำงานที่พอร์ต 3001 (หรือตามที่ระบุในไฟล์ `.env`)
