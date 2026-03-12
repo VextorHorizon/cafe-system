@@ -189,4 +189,23 @@ cd frontend && npm run dev        ← port 3000
 - [x] Frontend — /menu page (CRUD)
 - [x] Frontend — /orders page
 - [x] Frontend — /dashboard page
-- [x] Backend + Frontend — Order status (finished / unfinished)
+- [x] (Optional) Backend + Frontend — Order status toggle (finished / unfinished)
+
+---
+
+## Roadmap
+
+### 1. Frontend — User Order Page
+- Route group `(user)/` แยกจาก `(admin)/`
+- หน้า `/order` — MenuGrid เลือกเมนู + CartDrawer + Confirm
+- ใช้ React Context สำหรับ cart state
+- เรียก `POST /orders` เดิม — ไม่ต้องแก้ backend
+
+### 2. Backend — Auto-clear Orders เกิน 3 วัน
+- ใช้ `@nestjs/schedule` (cron job)
+- รันทุกคืน เที่ยงคืน — ลบ orders ที่ `createdAt < now - 3 days`
+- เพิ่ม `CleanupModule` หรือใส่ใน `OrderModule`
+
+### 3. UI ใหม่
+- ออกแบบ design system ใหม่
+- อัปเดต Tailwind config + components ทั้งหมด

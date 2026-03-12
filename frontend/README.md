@@ -81,6 +81,25 @@ npm run dev
 
 ---
 
+## ฟีเจอร์ Optional (เพิ่มเติมภายหลัง)
+
+### Order Status — Finished / Unfinished
+ฟีเจอร์นี้เพิ่มเข้ามาเป็น optional นอกเหนือจาก core requirement เดิม
+
+- Admin สามารถติ๊ก checkbox ในหน้า `/orders` เพื่อมาร์คออเดอร์ว่า **Finished** หรือ **Unfinished**
+- แถวที่ Finished จะ dim ลงเพื่อแยกให้ชัดเจน
+- สถานะถูกบันทึกลง MongoDB ผ่าน `PATCH /orders/:id/status`
+
+---
+
+## Roadmap
+
+- [ ] หน้า Frontend สำหรับให้ User สั่งอาหาร (`(user)/order`)
+- [ ] Auto-clear ออเดอร์ที่เกิน 3 วัน (Backend scheduled job)
+- [ ] UI ใหม่
+
+---
+
 ## คำสั่งที่ใช้บ่อย
 
 ```bash
