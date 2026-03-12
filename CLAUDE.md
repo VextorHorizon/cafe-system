@@ -35,7 +35,7 @@ src/
 │       ├── create-menu.dto.ts
 │       └── update-menu.dto.ts
 ├── order/               ← ออเดอร์ + คำนวณราคา
-│   ├── order.schema.ts  ← embedded items snapshot, totalPrice, source
+│   ├── order.schema.ts  ← embedded items snapshot, totalPrice, source, status
 │   ├── order.module.ts
 │   ├── order.service.ts
 │   ├── order.controller.ts
@@ -53,6 +53,7 @@ DELETE /menu/:id          → ลบเมนู
 
 POST   /orders            → สร้างออเดอร์ { items: [{ menuItemId, quantity }] }
 GET    /orders            → รายการออเดอร์ทั้งหมด (newest first)
+PATCH  /orders/:id/status → อัปเดตสถานะออเดอร์ { status: 'finished' | 'unfinished' }
 GET    /orders/summary    → { totalOrders, totalRevenue, orders[] }
 ```
 
