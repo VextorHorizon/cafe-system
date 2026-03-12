@@ -36,13 +36,13 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-text-primary uppercase tracking-widest">
+        <h1 className="text-xl font-semibold text-primary uppercase tracking-widest">
           Dashboard
         </h1>
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-16 text-text-muted text-sm">
+        <div className="flex items-center justify-center py-16 text-muted text-sm">
           Loading...
         </div>
       ) : error ? (
@@ -77,12 +77,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Recent Orders */}
-          <div className="rounded-xl border border-border bg-surface">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">
+          <div className="rounded-xl border border-cafe-border bg-surface">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-cafe-border">
+              <h2 className="text-xs font-semibold text-muted uppercase tracking-widest">
                 Recent Orders
               </h2>
-              <span className="text-xs text-text-muted">Last 10</span>
+              <span className="text-xs text-muted">Last 10</span>
             </div>
             <div className="p-4">
               <OrderTable orders={summary.orders.slice(0, 10)} />

@@ -111,7 +111,7 @@ export default function MenuPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-text-primary uppercase tracking-widest">
+        <h1 className="text-xl font-semibold text-primary uppercase tracking-widest">
           Menu Management
         </h1>
         <button
@@ -123,14 +123,14 @@ export default function MenuPage() {
       </div>
 
       {/* Card */}
-      <div className="rounded-xl border border-border bg-surface">
+      <div className="rounded-xl border border-cafe-border bg-surface">
         <div className="px-4 pt-4">
           <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
 
         <div className="p-4">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16 text-text-muted text-sm">
+            <div className="flex items-center justify-center py-16 text-muted text-sm">
               Loading...
             </div>
           ) : error ? (

@@ -13,7 +13,7 @@ interface TabBarProps {
 
 export default function TabBar({ tabs, active, onChange }: TabBarProps) {
   return (
-    <div className="flex border-b border-border">
+    <div className="flex border-b border-cafe-border">
       {tabs.map((tab) => (
         <button
           key={tab.value}
@@ -21,7 +21,7 @@ export default function TabBar({ tabs, active, onChange }: TabBarProps) {
           className={`px-4 py-2.5 text-sm font-medium transition-colors -mb-px ${
             active === tab.value
               ? 'border-b-2 border-gold text-gold'
-              : 'text-text-muted hover:text-text-primary'
+              : 'text-muted hover:text-primary'
           }`}
         >
           {tab.label}

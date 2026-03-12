@@ -35,7 +35,7 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
 
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-text-muted">
+      <div className="flex flex-col items-center justify-center py-16 text-muted">
         <p className="text-sm">No orders found.</p>
       </div>
     );
@@ -45,20 +45,20 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-border">
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+          <tr className="border-b border-cafe-border">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Status
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Order ID
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Items
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Total
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Date
             </th>
           </tr>
@@ -70,7 +70,7 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
             return (
               <tr
                 key={order._id}
-                className={`border-b border-border transition-colors ${
+                className={`border-b border-cafe-border transition-colors ${
                   isFinished ? 'opacity-50' : 'hover:bg-elevated'
                 }`}
                 style={{ height: '52px' }}
@@ -85,7 +85,7 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
                     <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
                       isFinished
                         ? 'bg-gold border-gold'
-                        : 'border-border hover:border-gold'
+                        : 'border-cafe-border hover:border-gold'
                     }`}>
                       {isFinished && (
                         <svg className="w-3 h-3 text-main" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
@@ -94,24 +94,24 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
                       )}
                     </div>
                     <span className={`text-xs uppercase tracking-widest ${
-                      isFinished ? 'text-gold' : 'text-text-muted'
+                      isFinished ? 'text-gold' : 'text-muted'
                     }`}>
                       {isLoading ? '...' : isFinished ? 'Finished' : 'Unfinished'}
                     </span>
                   </button>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="font-mono text-xs text-text-muted">
+                  <span className="font-mono text-xs text-muted">
                     #{order._id.slice(-8).toUpperCase()}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-sm text-text-primary">
+                <td className="px-4 py-3 text-sm text-primary">
                   {order.items.map((item) => `${item.name} ×${item.quantity}`).join(', ')}
                 </td>
                 <td className="px-4 py-3 text-sm font-medium text-gold">
                   ฿{order.totalPrice.toFixed(2)}
                 </td>
-                <td className="px-4 py-3 text-sm text-text-muted">
+                <td className="px-4 py-3 text-sm text-muted">
                   {formatDate(order.createdAt)}
                 </td>
               </tr>
