@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat > D:/cafe-system/frontend/.env.local << 'EOF'\nNEXT_PUBLIC_API_URL=http://localhost:3001\nEOF\nmkdir -p D:/cafe-system/frontend/src/lib\nmkdir -p D:/cafe-system/frontend/src/components/ui\nmkdir -p D:/cafe-system/frontend/src/components/admin\nmkdir -p \"D:/cafe-system/frontend/src/app/\\(admin\\)/menu\"\nmkdir -p \"D:/cafe-system/frontend/src/app/\\(admin\\)/orders\"\nmkdir -p \"D:/cafe-system/frontend/src/app/\\(admin\\)/dashboard\")",
+      "Bash(cd D:/cafe-system/frontend && npm run build 2>&1)",
+      "Bash(ls D:/cafe-system/frontend/src/app/\\\\\\(admin\\\\\\)/ 2>/dev/null || echo \"empty\"\nls D:/cafe-system/frontend/src/lib/ 2>/dev/null || echo \"no lib\"\nls D:/cafe-system/frontend/src/components/ 2>/dev/null || echo \"no components\")",
+      "Bash(ls D:/cafe-system/frontend/src/app/\\\\\\(admin\\\\\\)/menu/ && ls D:/cafe-system/frontend/src/app/\\\\\\(admin\\\\\\)/orders/ && ls D:/cafe-system/frontend/src/app/\\\\\\(admin\\\\\\)/dashboard/)",
+      "Bash(curl -s -X POST http://localhost:3001/orders \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"items\": [{\"menuItemId\": \"69b1c35f2100d513e8d9280e\", \"quantity\": 2}]}' | python -m json.tool)",
+      "Bash(cd D:/cafe-system && gh pr create --title \"feat: Add Next.js 14 admin dashboard frontend\" --body \"$\\(cat <<'EOF'\n## Summary\n- Scaffold Next.js 14 App Router + TypeScript + Tailwind CSS frontend\n- Dark design system \\(bg `#0c0c10`, gold `#c9a96e`, Georgia serif\\) matching spec\n- Full admin CRUD for menu items, order history, and dashboard stats\n\n## Changes\n- `lib/types.ts` + `lib/api.ts` — all TypeScript interfaces and centralized fetch functions\n- UI components: `CategoryBadge`, `StatCard`, `Toast`, `TabBar`\n- Admin components: `Sidebar`, `MenuTable`, `MenuFormModal`, `DeleteConfirmModal`, `OrderTable`\n- Pages: `/menu` \\(full CRUD\\), `/orders` \\(history + date filter\\), `/dashboard` \\(stats + recent orders\\)\n- Root `/` redirects to `/menu`\n\n## Test plan\n- [ ] Backend running on port 3001 \\(`npm run start:dev`\\)\n- [ ] Frontend running on port 3000 \\(`npm run dev`\\)\n- [ ] `/menu` — add, edit, delete menu items\n- [ ] `/orders` — view order history, filter by today/this week\n- [ ] `/dashboard` — verify total orders, revenue, avg order value, recent orders table\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\nEOF\n\\)\")",
+      "Bash(curl -s http://localhost:3001/menu | python -m json.tool)",
+      "Bash(curl -s -X POST http://localhost:3001/orders \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"items\": [{\"menuItemId\": \"69b2aafa9c2b1a6674d96197\", \"quantity\": 1}]}' | python -m json.tool)",
+      "Bash(curl -s http://localhost:3001/orders | python -m json.tool | head -30)",
+      "Bash(cd D:/cafe-system/frontend/src && find . -name \"*.tsx\" | xargs sed -i \\\\\n  -e 's/border-border/border-cafe-border/g' \\\\\n  -e 's/text-text-primary/text-primary/g' \\\\\n  -e 's/text-text-muted/text-muted/g' \\\\\n  -e 's/bg-text-muted/bg-muted/g' \\\\\n  -e 's/hover:border-text-muted/hover:border-muted/g')",
+      "Bash(pkill -f \"next dev\" 2>/dev/null; sleep 1; echo \"killed\")",
+      "Bash(cd D:/cafe-system/frontend && npm run dev)",
+      "Bash(netstat -ano)",
+      "Bash(xargs -r taskkill //PID //F)",
+      "Bash(cmd //c \"FOR /F \\\\\"tokens=5\\\\\" %P IN \\('netstat -ano ^| findstr :3000'\\) DO taskkill /PID %P /F\" 2>/dev/null; echo \"done\")",
+      "Bash(cmd //c \"netstat -ano | findstr :3000\")",
+      "Bash(cmd //c \"taskkill /PID 26004 /F\")",
+      "Bash(cd D:/cafe-system && cat backend/package.json | python -m json.tool)",
+      "Bash(cd D:/cafe-system && cat frontend/package.json | python -m json.tool)",
+      "Bash(cd D:/cafe-system/backend && npm test -- --verbose 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npm test -- --verbose --coverage 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npm run test:e2e 2>&1)",
+      "Bash(curl -s http://localhost:3001/menu > /dev/null 2>&1 && echo \"running\" || echo \"not running\")",
+      "Bash(cd D:/cafe-system/backend && npm run test:e2e -- --verbose 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npx jest --verbose --no-coverage 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npx jest --verbose --forceExit 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npx jest --verbose --forceExit --testPathPattern=\"menu|order\" 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npx jest --verbose --forceExit \"menu|order\" 2>&1)",
+      "Bash(cd D:/cafe-system/backend && npm test -- --verbose --forceExit 2>&1; echo \"EXIT:$?\")",
+      "Bash(cd D:/cafe-system/backend && npm test -- --verbose --forceExit --json --outputFile=test-results.json 2>&1; cat test-results.json | python -m json.tool | python -c \"\nimport json,sys\ndata=json.load\\(open\\('test-results.json'\\)\\)\nfor suite in data['testResults']:\n    print\\(suite['testFilePath'].split\\('src/'\\)[-1]\\)\n    for t in suite['testResults']:\n        status = '✓' if t['status']=='passed' else '✗'\n        print\\(f'  {status} {t[\\\\\"fullName\\\\\"]}'\\)\nprint\\(\\)\nprint\\(f'Suites: {data[\\\\\"numPassedTestSuites\\\\\"]}/{data[\\\\\"numTotalTestSuites\\\\\"]} passed'\\)\nprint\\(f'Tests:  {data[\\\\\"numPassedTests\\\\\"]}/{data[\\\\\"numTotalTests\\\\\"]} passed'\\)\nprint\\(f'Time:   {data[\\\\\"testResults\\\\\"][0][\\\\\"perfStats\\\\\"][\\\\\"runtime\\\\\"]/1000:.2f}s'\\)\n\")",
+      "Bash(python -c \"\nimport json\ndata=json.load\\(open\\('D:/cafe-system/backend/test-results.json'\\)\\)\nfor suite in data['testResults']:\n    path = suite['testFilePath'].replace\\('\\\\\\\\\\\\\\\\','/'\\).split\\('backend/'\\)[-1]\n    print\\(f'\\\\n{path}'\\)\n    for t in suite['testResults']:\n        status = '✓' if t['status']=='passed' else '✗'\n        print\\(f'  {status} {t[\\\\\"fullName\\\\\"]}'\\)\nprint\\(\\)\nprint\\(f'Suites: {data[\\\\\"numPassedTestSuites\\\\\"]}/{data[\\\\\"numTotalTestSuites\\\\\"]} passed'\\)\nprint\\(f'Tests:  {data[\\\\\"numPassedTests\\\\\"]}/{data[\\\\\"numTotalTests\\\\\"]} passed'\\)\n\")",
+      "Bash(python -c \"\nimport json\ndata=json.load\\(open\\('D:/cafe-system/backend/test-results.json'\\)\\)\nfor suite in data['testResults']:\n    path = suite['testFilePath'].replace\\(chr\\(92\\),'/'\\).split\\('backend/'\\)[-1]\n    print\\(\\)\n    print\\(path\\)\n    for t in suite['testResults']:\n        s = 'PASS' if t['status']=='passed' else 'FAIL'\n        print\\('  ['+s+'] '+t['fullName']\\)\nprint\\(\\)\nprint\\('Suites: '+str\\(data['numPassedTestSuites']\\)+'/'+str\\(data['numTotalTestSuites']\\)+' passed'\\)\nprint\\('Tests:  '+str\\(data['numPassedTests']\\)+'/'+str\\(data['numTotalTests']\\)+' passed'\\)\n\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('D:/cafe-system/backend/test-results.json'\\)\\); print\\(list\\(data['testResults'][0].keys\\(\\)\\)\\)\")",
+      "Bash(python -c \"\nimport json\ndata=json.load\\(open\\('D:/cafe-system/backend/test-results.json'\\)\\)\nfor suite in data['testResults']:\n    name = suite['name'].replace\\(chr\\(92\\),'/'\\).split\\('backend/'\\)[-1]\n    print\\(\\)\n    print\\(name\\)\n    for t in suite['assertionResults']:\n        s = 'PASS' if t['status']=='passed' else 'FAIL'\n        print\\('  ['+s+'] '+t['fullName']\\)\nprint\\(\\)\nprint\\('Suites: '+str\\(data['numPassedTestSuites']\\)+'/'+str\\(data['numTotalTestSuites']\\)+' passed'\\)\nprint\\('Tests:  '+str\\(data['numPassedTests']\\)+'/'+str\\(data['numTotalTests']\\)+' passed'\\)\nprint\\('Time:   '+str\\(round\\(data['testResults'][0]['endTime']-data['testResults'][0]['startTime']\\)\\)+'ms'\\)\n\")",
+      "Bash(cd D:/cafe-system/backend && npm run test:e2e -- --verbose --json --outputFile=test-e2e-results.json 2>&1; python -c \"\nimport json\ndata=json.load\\(open\\('test-e2e-results.json'\\)\\)\nfor suite in data['testResults']:\n    name = suite['name'].replace\\(chr\\(92\\),'/'\\).split\\('backend/'\\)[-1]\n    print\\(\\)\n    print\\(name\\)\n    for t in suite['assertionResults']:\n        s = 'PASS' if t['status']=='passed' else 'FAIL'\n        print\\('  ['+s+'] '+t['fullName']\\)\nprint\\(\\)\nprint\\('Suites: '+str\\(data['numPassedTestSuites']\\)+'/'+str\\(data['numTotalTestSuites']\\)+' passed'\\)\nprint\\('Tests:  '+str\\(data['numPassedTests']\\)+'/'+str\\(data['numTotalTests']\\)+' passed'\\)\n\")",
+      "Bash(cd D:/cafe-system/backend && npm test -- --coverage --forceExit 2>&1 | grep -A 30 \"File\")",
+      "Bash(cd D:/cafe-system/backend && npm test -- --forceExit 2>&1 | tail -6)"
+    ]
+  }
+}

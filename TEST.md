@@ -117,6 +117,9 @@
 | `order.controller.ts` | 0% | 0% | 0% | Covered by API tests |
 | Overall | 42% | 41% | 41% | — |
 
+Controller coverage = 0% intentionally
+→ covered by API/Integration tests (test/api.e2e-spec.ts)
+
 ---
 
 ## 4. E2E Frontend
