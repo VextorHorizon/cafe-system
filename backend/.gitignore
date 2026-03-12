@@ -1,7 +1,8 @@
 node_modules/
 dist/
+coverage/
 .env
 *.log
 
-# IDE  
+# IDE
 .vscode/
