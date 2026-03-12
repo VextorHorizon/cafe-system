@@ -184,8 +184,9 @@ cd frontend && npm run dev        ← port 3000
 - [x] Backend — MenuModule CRUD
 - [x] Backend — OrderModule + validation + price calculation
 - [x] Backend — seed script
-- [ ] Frontend — setup + lib/types.ts + lib/api.ts
-- [ ] Frontend — Sidebar + layout
-- [ ] Frontend — /menu page (CRUD)
-- [ ] Frontend — /orders page
-- [ ] Frontend — /dashboard page
+- [x] Frontend — setup + lib/types.ts + lib/api.ts
+- [x] Frontend — Sidebar + layout
+- [x] Frontend — /menu page (CRUD)
+- [x] Frontend — /orders page
+- [x] Frontend — /dashboard page
+- [x] Backend + Frontend — Order status (finished / unfinished)

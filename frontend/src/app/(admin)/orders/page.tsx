@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 import { fetchOrders } from '@/lib/api';
 import OrderTable from '@/components/admin/OrderTable';
 import TabBar from '@/components/ui/TabBar';
@@ -54,6 +54,12 @@ export default function OrdersPage() {
     loadOrders();
   }, [loadOrders]);
 
+  function handleStatusChange(id: string, status: OrderStatus) {
+    setOrders((prev) =>
+      prev.map((o) => (o._id === id ? { ...o, status } : o))
+    );
+  }
+
   const filteredOrders =
     activeTab === 'all'
       ? orders
@@ -93,7 +99,7 @@ export default function OrdersPage() {
               </button>
             </div>
           ) : (
-            <OrderTable orders={filteredOrders} />
+            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
           )}
         </div>
       </div>

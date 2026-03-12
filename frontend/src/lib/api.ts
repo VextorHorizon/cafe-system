@@ -2,6 +2,7 @@ import type {
   MenuItem,
   Order,
   OrderSummary,
+  OrderStatus,
   CreateMenuPayload,
   UpdateMenuPayload,
   CreateOrderPayload,
@@ -60,6 +61,13 @@ export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   return request<Order>('/orders', {
     method: 'POST',
     body: JSON.stringify(payload),
+  });
+}
+
+export async function updateOrderStatus(id: string, status: OrderStatus): Promise<Order> {
+  return request<Order>(`/orders/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
   });
 }
 

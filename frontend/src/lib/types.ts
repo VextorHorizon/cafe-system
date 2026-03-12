@@ -16,11 +16,14 @@ export interface OrderItem {
   unitPrice: number;
 }
 
+export type OrderStatus = 'unfinished' | 'finished';
+
 export interface Order {
   _id: string;
   items: OrderItem[];
   totalPrice: number;
   source: string | null;
+  status: OrderStatus;
   createdAt: string;
 }
 
