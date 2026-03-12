@@ -12,7 +12,7 @@ interface MenuTableProps {
 export default function MenuTable({ items, onEdit, onDelete }: MenuTableProps) {
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-text-muted">
+      <div className="flex flex-col items-center justify-center py-16 text-muted">
         <p className="text-sm">No menu items found.</p>
       </div>
     );
@@ -22,17 +22,17 @@ export default function MenuTable({ items, onEdit, onDelete }: MenuTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-border">
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+          <tr className="border-b border-cafe-border">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Name
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Category
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest text-muted">
               Price
             </th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-widest text-text-muted">
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-widest text-muted">
               Actions
             </th>
           </tr>
@@ -41,29 +41,29 @@ export default function MenuTable({ items, onEdit, onDelete }: MenuTableProps) {
           {items.map((item) => (
             <tr
               key={item._id}
-              className="border-b border-border hover:bg-elevated transition-colors"
+              className="border-b border-cafe-border hover:bg-elevated transition-colors"
               style={{ height: '52px' }}
             >
               <td className="px-4 py-3">
-                <span className="text-sm font-medium text-text-primary">{item.name}</span>
+                <span className="text-sm font-medium text-primary">{item.name}</span>
               </td>
               <td className="px-4 py-3">
                 <CategoryBadge category={item.category} />
               </td>
-              <td className="px-4 py-3 text-sm text-text-primary">
+              <td className="px-4 py-3 text-sm text-primary">
                 ฿{item.price.toFixed(2)}
               </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex items-center justify-end gap-2">
                   <button
                     onClick={() => onEdit(item)}
-                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-text-muted hover:border-gold hover:text-gold transition-colors"
+                    className="rounded-md border border-cafe-border px-3 py-1.5 text-xs font-medium text-muted hover:border-gold hover:text-gold transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => onDelete(item)}
-                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-text-muted hover:border-red-500 hover:text-red-400 transition-colors"
+                    className="rounded-md border border-cafe-border px-3 py-1.5 text-xs font-medium text-muted hover:border-red-500 hover:text-red-400 transition-colors"
                   >
                     Delete
                   </button>

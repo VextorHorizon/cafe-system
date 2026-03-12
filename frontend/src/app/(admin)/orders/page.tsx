@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 import { fetchOrders } from '@/lib/api';
 import OrderTable from '@/components/admin/OrderTable';
 import TabBar from '@/components/ui/TabBar';
@@ -54,6 +54,12 @@ export default function OrdersPage() {
     loadOrders();
   }, [loadOrders]);
 
+  function handleStatusChange(id: string, status: OrderStatus) {
+    setOrders((prev) =>
+      prev.map((o) => (o._id === id ? { ...o, status } : o))
+    );
+  }
+
   const filteredOrders =
     activeTab === 'all'
       ? orders
@@ -64,22 +70,22 @@ export default function OrdersPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-text-primary uppercase tracking-widest">
+        <h1 className="text-xl font-semibold text-primary uppercase tracking-widest">
           Order History
         </h1>
-        <span className="rounded-full bg-elevated border border-border px-3 py-1 text-xs font-medium text-text-muted uppercase tracking-widest">
+        <span className="rounded-full bg-elevated border border-cafe-border px-3 py-1 text-xs font-medium text-muted uppercase tracking-widest">
           {orders.length} orders
         </span>
       </div>
 
-      <div className="rounded-xl border border-border bg-surface">
+      <div className="rounded-xl border border-cafe-border bg-surface">
         <div className="px-4 pt-4">
           <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
 
         <div className="p-4">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16 text-text-muted text-sm">
+            <div className="flex items-center justify-center py-16 text-muted text-sm">
               Loading...
             </div>
           ) : error ? (
@@ -93,7 +99,7 @@ export default function OrdersPage() {
               </button>
             </div>
           ) : (
-            <OrderTable orders={filteredOrders} />
+            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
           )}
         </div>
       </div>

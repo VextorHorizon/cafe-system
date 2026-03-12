@@ -30,6 +30,9 @@ export class Order {
 
   @Prop({ type: String, enum: ['admin', 'user', null], default: null })
   source: string | null;
+
+  @Prop({ type: String, enum: ['unfinished', 'finished'], default: 'unfinished' })
+  status: 'unfinished' | 'finished';
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

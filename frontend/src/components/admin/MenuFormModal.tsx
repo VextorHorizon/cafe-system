@@ -56,14 +56,14 @@ export default function MenuFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-md rounded-xl bg-elevated border border-border p-6 shadow-xl">
-        <h2 className="text-base font-semibold text-text-primary mb-5 uppercase tracking-widest">
+      <div className="relative z-10 w-full max-w-md rounded-xl bg-elevated border border-cafe-border p-6 shadow-xl">
+        <h2 className="text-base font-semibold text-primary mb-5 uppercase tracking-widest">
           {isEdit ? 'Edit Menu Item' : 'Add Menu Item'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-widest text-text-muted mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-muted mb-1.5">
               Name
             </label>
             <input
@@ -71,14 +71,14 @@ export default function MenuFormModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Latte"
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:border-gold focus:outline-none"
+              className="w-full rounded-lg border border-cafe-border bg-surface px-3 py-2 text-sm text-primary placeholder-text-muted focus:border-gold focus:outline-none"
             />
             {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
           </div>
 
           {/* Price */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-widest text-text-muted mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-muted mb-1.5">
               Price (฿)
             </label>
             <input
@@ -88,20 +88,20 @@ export default function MenuFormModal({
               min="0"
               step="0.01"
               placeholder="0.00"
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:border-gold focus:outline-none"
+              className="w-full rounded-lg border border-cafe-border bg-surface px-3 py-2 text-sm text-primary placeholder-text-muted focus:border-gold focus:outline-none"
             />
             {errors.price && <p className="mt-1 text-xs text-red-400">{errors.price}</p>}
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-widest text-text-muted mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-muted mb-1.5">
               Category
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as Category)}
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+              className="w-full rounded-lg border border-cafe-border bg-surface px-3 py-2 text-sm text-primary focus:border-gold focus:outline-none"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -116,7 +116,7 @@ export default function MenuFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-text-muted hover:border-text-muted hover:text-text-primary transition-colors"
+              className="rounded-lg border border-cafe-border px-4 py-2 text-sm font-medium text-muted hover:border-muted hover:text-primary transition-colors"
             >
               Cancel
             </button>

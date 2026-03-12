@@ -13,14 +13,14 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 flex flex-col bg-surface border-r border-border z-40">
+    <aside className="fixed left-0 top-0 h-screen w-64 flex flex-col bg-surface border-r border-cafe-border z-40">
       {/* Brand */}
-      <div className="px-6 py-6 border-b border-border">
+      <div className="px-6 py-6 border-b border-cafe-border">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-gold flex items-center justify-center text-main text-xs font-bold">
             C
           </div>
-          <span className="font-semibold text-sm text-text-primary">Cafe Admin</span>
+          <span className="font-semibold text-sm text-primary">Cafe Admin</span>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export default function Sidebar() {
                   className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-elevated text-gold'
-                      : 'text-text-muted hover:bg-elevated hover:text-text-primary'
+                      : 'text-muted hover:bg-elevated hover:text-primary'
                   }`}
                 >
                   {item.label}
@@ -48,8 +48,8 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-border">
-        <p className="text-xs text-text-muted uppercase tracking-widest">v1.0</p>
+      <div className="px-6 py-4 border-t border-cafe-border">
+        <p className="text-xs text-muted uppercase tracking-widest">v1.0</p>
       </div>
     </aside>
   );
