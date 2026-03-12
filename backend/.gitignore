@@ -3,6 +3,8 @@ dist/
 coverage/
 .env
 *.log
+test-results.json
+test-e2e-results.json
 
 # IDE
 .vscode/
