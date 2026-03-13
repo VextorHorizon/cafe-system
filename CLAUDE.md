@@ -188,8 +188,11 @@ cd frontend && npm run dev        ← port 3000
 - [x] Frontend — setup + lib/types.ts + lib/api.ts
 - [x] Frontend — Sidebar + layout
 - [x] Frontend — /menu page (CRUD)
-- [x] Frontend — /orders page
-- [x] Frontend — /dashboard page
+- [x] Frontend — /admin orders page 
+- [x] Frontend — /admin dashboard page
+Optional(Must have)
+- []  Frontend — /customer order menu (POS Style)
+- []  Backend + Frontend — Linking API endpoint to customer frontend 
 - [x] (Optional) Backend + Frontend — Order status toggle (finished / unfinished)
 
 ---
