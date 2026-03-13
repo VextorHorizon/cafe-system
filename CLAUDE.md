@@ -191,8 +191,8 @@ cd frontend && npm run dev        ← port 3000
 - [x] Frontend — /admin orders page 
 - [x] Frontend — /admin dashboard page
 Optional(Must have)
-- []  Frontend — /customer order menu (POS Style)
-- []  Backend + Frontend — Linking API endpoint to customer frontend 
+- [ ]  Frontend — /customer order menu (POS Style)
+- [ ]  Backend + Frontend — Linking API endpoint to customer frontend 
 - [x] (Optional) Backend + Frontend — Order status toggle (finished / unfinished)
 
 ---
