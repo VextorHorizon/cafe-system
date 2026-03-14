@@ -2,7 +2,7 @@
 cmds = ["npm install --include=dev"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["npm run build", "npm run seed"]
 
 [start]
-cmd = "npm run start:prod"
+cmd = "node dist/main"
