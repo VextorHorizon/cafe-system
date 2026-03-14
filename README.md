@@ -13,7 +13,7 @@
 | Frontend | https://frontend-production-0524.up.railway.app                     |
 | Backend  | https://cafe-system-production.up.railway.app                       |
 
-**เปิด browser แล้วไปที่ URL ด้านบนได้เลย** — ระบบ deploy อยู่บน Railway ทั้งหมด ไม่ต้องติดตั้งอะไร
+**เปิด browser แล้วไปที่ URL ด้านบนได้เลย** ระบบ deploy อยู่บน Railway ทั้งหมด ไม่ต้องติดตั้งอะไร
 
 ### ลองใช้ API โดยตรง
 
@@ -438,7 +438,7 @@ Client                        Backend                       MongoDB
 
 ## Roadmap
 
-ฟีเจอร์ที่วางแผนพัฒนาต่อ — เรียงตามลำดับความสำคัญ
+ฟีเจอร์ที่วางแผนพัฒนาต่อ - เรียงตามลำดับความสำคัญ
 
 ### 1. หน้าสั่งออเดอร์ฝั่งลูกค้า (POS-style)
 
@@ -529,7 +529,7 @@ Stack: `@nestjs/schedule`
 
 ---
 
-## สิ่งที่ได้เรียนรู้จากโปรเจ็คนี้(มีโปรเจ็คอื่นๆที่ใช้ในการเรียนรู้ที่ผ่านมาด้วย ขอบคุณพี่ๆมากครับ )
+## สิ่งที่ได้เรียนรู้จากโปรเจ็คนี้(และมีโปรเจ็คอื่นๆที่ใช้ในการเรียนรู้ที่ผ่านมา)
 
 1. เข้าใจเรื่องระบบของหลังบ้านเว็บว่าทำงานยังไง CRUD, POST GET PATCH DELETE ว่า Http Request ทำงานยังไง แล้วใช้กับ Nestjs ที่ใช้อยู่ยังไง
 
@@ -555,4 +555,6 @@ Stack: `@nestjs/schedule`
 
 4. Decorator และ Dependency Injection อย่างลึก เข้าใจ surface level แล้วว่า `@Controller()` `@Injectable()` คืออะไร แต่ยังไม่เข้าใจว่า NestJS จัดการ lifecycle และ inject dependency ยังไงข้างใต้ ตรงนี้สำคัญมากถ้าจะ debug เวลา module ไม่ถูก import หรือ circular dependency เกิด
 
-ขอบคุณมากครับพี่ๆ
+5. ลดการพึ่งพาการใช้ AI มากเกินไป (อันนี้หนักอยู่ครับ)
+
+ขอบคุณมากครับพี่ๆ  <img src="https://i.pinimg.com/736x/ef/4f/fc/ef4ffc8e018fb320acccf3b22b769fff.jpg" alt="Description" width="75">  Nestjs ทำให้เข้าใจภาพรวมหลังบ้านเยอะขึ้นมากครับ
