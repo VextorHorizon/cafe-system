@@ -310,6 +310,75 @@ curl https://cafe-system-production.up.railway.app/orders/summary
 
 ---
 
+### ทดสอบด้วย User Order Postman 
+
+**ตั้งค่าเริ่มต้น:**
+1. เปิด Postman → สร้าง Collection ใหม่ชื่อ `Cafe System`
+2. สร้าง Variable ระดับ Collection: `base_url` = `https://cafe-system-production.up.railway.app`
+
+---
+
+**Step 1 — GET เมนูทั้งหมด**
+
+| Field  | Value |
+|--------|-------|
+| Method | `GET` |
+| URL    | `{{base_url}}/menu` |
+
+กด Send → คัดลอก `_id` ของเมนูที่ต้องการ → บันทึกไว้ใช้ Step 2
+
+---
+
+**Step 2 — POST สร้างออเดอร์**
+
+| Field        | Value |
+|--------------|-------|
+| Method       | `POST` |
+| URL          | `{{base_url}}/orders` |
+| Body (JSON)  | ดูด้านล่าง |
+
+Body → เลือก `raw` + `JSON`:
+
+```json
+{
+  "items": [
+    { "menuItemId": "<_id จาก Step 1>", "quantity": 2 },
+    { "menuItemId": "<_id อื่น>", "quantity": 1 }
+  ]
+}
+```
+
+> **อย่าใส่ `price`** — backend คำนวณเอง
+
+Response จะได้ `Order` object → คัดลอก `_id` ไว้ใช้ Step 3
+
+---
+
+**Step 3 — PATCH เปลี่ยนสถานะออเดอร์**
+
+| Field        | Value |
+|--------------|-------|
+| Method       | `PATCH` |
+| URL          | `{{base_url}}/orders/<_id จาก Step 2>/status` |
+| Body (JSON)  | ดูด้านล่าง |
+
+```json
+{ "status": "finished" }
+```
+
+เปลี่ยนกลับได้โดยส่ง `"status": "unfinished"`
+
+---
+
+**Step 4 — GET สรุปยอดขาย**
+
+| Field  | Value |
+|--------|-------|
+| Method | `GET` |
+| URL    | `{{base_url}}/orders/summary` |
+
+---
+
 ### Validation Rules
 
 - `category`: ต้องเป็น `coffee`, `tea`, หรือ `other` เท่านั้น
@@ -591,11 +660,11 @@ Stack: `@nestjs/schedule`
 
 4. Backend-as-Gatekeeper Mindset เข้าใจว่า Nestjs คือ framework ทื่ gatekeep ให้ validation ให้ก่อนที่ input จาก client จะเข้าตัวของ backend จริง
 
-5. เข้าใจจริงๆว่าในส่วนของ Backend กับ Frontend คุยกันยังไง เรียกใช้หลังบ้านจาก API endpoint ยังไง 
+5. เข้าใจจริงๆว่าในส่วนของ Backend กับ Frontend คุยกันยังไง เรียกใช้หลังบ้านจาก API endpoint ยังไง และพึ่งเคยได้ลองใช้ Postman TT
 
 6. Prompt Engineering Skill อันนี้เกิดจากที่เรารู้ว่าหลังบ้านมันหน้าตายังไง data flow ไหลไปทางไหนบ้าง ทำให้เราสั่ง Agents ทำงานได้แบบที่เขาต้องการจริงๆ
 
-7. Testing คือ Documentation อีกรูปแบบ 41 test cases ที่เขียนไปก็คือเอกสารที่อธิบาย behavior ของระบบได้ชัดกว่า README  พออ่าน test ก้สามารถรู้ทันทีว่า quantity > 20 reject, invalid menuItemId return 404 โดยไม่ต้องอ่านโค้ดเลย
+7. Testing Documentation ที่เขียนไปก็คือเอกสารที่อธิบาย behavior ของระบบได้ชัดกว่า README ครับ พออ่าน test ก้สามารถรู้ทันทีว่า quantity > 20 reject, invalid menuItemId return 404 โดยไม่ต้องอ่านโค้ดเลย
 
 8. ไม่เคยตั้ง Branch แล้วทำแยกมาก่อน พึ่งรู้ว่า git เจ๋งขนาดนี้ครับ
 
