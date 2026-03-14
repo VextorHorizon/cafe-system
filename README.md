@@ -543,7 +543,9 @@ Stack: `@nestjs/schedule`
 
 6. Prompt Engineering Skill อันนี้เกิดจากที่เรารู้ว่าหลังบ้านมันหน้าตายังไง data flow ไหลไปทางไหนบ้าง ทำให้เราสั่ง Agents ทำงานได้แบบที่เขาต้องการจริงๆ
 
-7. Testing คือ Documentation อีกรูปแบบหนึ่ง 41 test cases ที่เขียนไปคือเอกสารที่อธิบาย behavior ของระบบได้ชัดกว่า README  พอคนอ่าน test ก็สามารถรู้ทันทีว่า quantity > 20 reject, invalid menuItemId return 404 โดยไม่ต้องอ่านโค้ดเลย
+7. Testing คือ Documentation อีกรูปแบบ 41 test cases ที่เขียนไปก็คือเอกสารที่อธิบาย behavior ของระบบได้ชัดกว่า README  พออ่าน test ก้สามารถรู้ทันทีว่า quantity > 20 reject, invalid menuItemId return 404 โดยไม่ต้องอ่านโค้ดเลย
+
+8. ไม่เคยตั้ง Branch แล้วทำแยกมาก่อน พึ่งรู้ว่า git เจ๋งขนาดนี้ครับ
 
 ## สิ่งที่ต้องพัฒนาในอนาคต
 
@@ -556,5 +558,7 @@ Stack: `@nestjs/schedule`
 4. Decorator และ Dependency Injection อย่างลึก เข้าใจ surface level แล้วว่า `@Controller()` `@Injectable()` คืออะไร แต่ยังไม่เข้าใจว่า NestJS จัดการ lifecycle และ inject dependency ยังไงข้างใต้ ตรงนี้สำคัญมากถ้าจะ debug เวลา module ไม่ถูก import หรือ circular dependency เกิด
 
 5. ลดการพึ่งพาการใช้ AI มากเกินไป (อันนี้หนักอยู่ครับ)
+
+6. ตอนนี้เริ่มเล็งๆเรื่องของ Github Action ไว้ครับ
 
 ขอบคุณมากครับพี่ๆ  <img src="https://i.pinimg.com/736x/ef/4f/fc/ef4ffc8e018fb320acccf3b22b769fff.jpg" alt="Description" width="75">  Nestjs ทำให้เข้าใจภาพรวมหลังบ้านเยอะขึ้นมากครับ
