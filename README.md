@@ -32,6 +32,7 @@ curl https://cafe-system-production.up.railway.app/orders/summary
 
 ## สารบัญ
 
+- [ทดลองใช้งานได้เลย (Live Demo)](#ทดลองใช้งานได้เลย-live-demo)
 - [ภาพรวมระบบ](#ภาพรวมระบบ)
 - [โครงสร้างโปรเจกต์](#โครงสร้างโปรเจกต์)
 - [รันในเครื่อง (Local Dev)](#รันในเครื่อง-local-dev)
@@ -41,7 +42,10 @@ curl https://cafe-system-production.up.railway.app/orders/summary
 - [Frontend Pages](#frontend-pages)
 - [Design System](#design-system)
 - [Deployment บน Railway](#deployment-บน-railway)
+- [Architecture Highlights](#architecture-highlights)
 - [Roadmap](#roadmap)
+- [สิ่งที่ได้เรียนรู้จากโปรเจ็คนี้](#สิ่งที่ได้เรียนรู้จากโปรเจ็คนี้และมีโปรเจ็คอื่นๆที่ใช้ในการเรียนรู้ที่ผ่านมา)
+- [สิ่งที่ต้องพัฒนาในอนาคต](#สิ่งที่ต้องพัฒนาในอนาคต)
 
 ---
 
