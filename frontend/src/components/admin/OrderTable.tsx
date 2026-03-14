@@ -21,13 +21,17 @@ function formatDate(iso: string): string {
 
 export default function OrderTable({ orders, onStatusChange }: OrderTableProps) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [errorId, setErrorId] = useState<string | null>(null);
 
   async function handleToggle(order: Order) {
     const next: OrderStatus = order.status === 'finished' ? 'unfinished' : 'finished';
     setLoadingId(order._id);
+    setErrorId(null);
     try {
       await updateOrderStatus(order._id, next);
       onStatusChange?.(order._id, next);
+    } catch {
+      setErrorId(order._id);
     } finally {
       setLoadingId(null);
     }
@@ -94,9 +98,9 @@ export default function OrderTable({ orders, onStatusChange }: OrderTableProps) 
                       )}
                     </div>
                     <span className={`text-xs uppercase tracking-widest ${
-                      isFinished ? 'text-gold' : 'text-muted'
+                      errorId === order._id ? 'text-red-400' : isFinished ? 'text-gold' : 'text-muted'
                     }`}>
-                      {isLoading ? '...' : isFinished ? 'Finished' : 'Unfinished'}
+                      {isLoading ? '...' : errorId === order._id ? 'Failed' : isFinished ? 'Finished' : 'Unfinished'}
                     </span>
                   </button>
                 </td>
