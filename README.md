@@ -258,7 +258,7 @@ curl -X POST https://cafe-system-production.up.railway.app/orders \
   -d '{"items": [{"menuItemId": "<id>", "quantity": 2}]}'
 ```
 
-### ทดสอบ Order Flow แบบ Step-by-Step
+### วิธีการทดสอบ Order แบบ Step-by-Step (ฉบับยังไม่มี Frontend User Menu)
 
 ทำตามลำดับนี้เพื่อทดสอบการสั่งออเดอร์ครบ loop:
 
