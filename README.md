@@ -258,6 +258,58 @@ curl -X POST https://cafe-system-production.up.railway.app/orders \
   -d '{"items": [{"menuItemId": "<id>", "quantity": 2}]}'
 ```
 
+### ทดสอบ Order Flow แบบ Step-by-Step
+
+ทำตามลำดับนี้เพื่อทดสอบการสั่งออเดอร์ครบ loop:
+
+**Step 1 — ดูเมนูและเก็บ `_id`**
+
+```bash
+curl https://cafe-system-production.up.railway.app/menu
+```
+
+ผลลัพธ์จะได้ array ของเมนู — คัดลอก `_id` ของเมนูที่ต้องการสั่ง
+
+**Step 2 — สร้างออเดอร์**
+
+```bash
+curl -X POST https://cafe-system-production.up.railway.app/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      { "menuItemId": "<_id จาก Step 1>", "quantity": 2 },
+      { "menuItemId": "<_id อื่น>", "quantity": 1 }
+    ]
+  }'
+```
+
+> ห้ามส่ง `price` — backend คำนวณเอง
+> Response จะได้ `Order` object พร้อม `_id` และ `totalPrice`
+
+**Step 3 — ตรวจสอบว่าออเดอร์ถูกสร้าง**
+
+```bash
+curl https://cafe-system-production.up.railway.app/orders
+```
+
+**Step 4 — เปลี่ยนสถานะออเดอร์**
+
+```bash
+curl -X PATCH https://cafe-system-production.up.railway.app/orders/<_id จาก Step 2>/status \
+  -H "Content-Type: application/json" \
+  -d '{"status": "finished"}'
+```
+
+**Step 5 — ดูสรุปยอดขาย**
+
+```bash
+curl https://cafe-system-production.up.railway.app/orders/summary
+```
+
+ผลลัพธ์: `{ totalOrders, totalRevenue, orders[] }`
+
+---
+
 ### Validation Rules
 
 - `category`: ต้องเป็น `coffee`, `tea`, หรือ `other` เท่านั้น
