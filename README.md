@@ -1,6 +1,6 @@
 # Cafe Management System
 
-ระบบจัดการร้านกาแฟ — Admin Dashboard สำหรับจัดการเมนู ออเดอร์ และดูสรุปยอดขาย
+ระบบจัดการร้านกาแฟ — Admin Dashboard + Customer POS สำหรับจัดการเมนู ออเดอร์ ดูสรุปยอดขาย และหน้าสั่งออเดอร์สำหรับลูกค้า
 
 **Tech Stack:** NestJS + Next.js 14 + MongoDB + Tailwind CSS
 
@@ -62,10 +62,10 @@ curl https://cafe-system-production.up.railway.app/orders/summary
 │                    Frontend (Next.js 14)                         │
 │         frontend-production-0524.up.railway.app               │
 │                                                                  │
-│   ┌──────────┐    ┌──────────┐    ┌───────────┐                 │
-│   │ /menu    │    │ /orders  │    │ /dashboard│                 │
-│   │ CRUD เมนู│    │ ดูออเดอร์ │    │ สรุปยอด   │                 │
-│   └──────────┘    └──────────┘    └───────────┘                 │
+│   ┌──────────┐    ┌──────────┐    ┌───────────┐    ┌──────────┐ │
+│   │ /menu    │    │ /orders  │    │ /dashboard│    │ /order   │ │
+│   │ CRUD เมนู│    │ ดูออเดอร์ │    │ สรุปยอด   │    │ POS ลูกค้า│ │
+│   └──────────┘    └──────────┘    └───────────┘    └──────────┘ │
 │                                                                  │
 │   lib/api.ts  ← fetch ทุกอันอยู่ที่นี่ที่เดียว                    │
 └─────────────────────────────┬────────────────────────────────────┘
@@ -79,6 +79,8 @@ curl https://cafe-system-production.up.railway.app/orders/summary
 │   │  MenuModule    │      │   OrderModule   │                   │
 │   │  CRUD เมนู     │      │  สร้าง/ดูออเดอร์  │                   │
 │   │                │      │  คำนวณราคา       │                   │
+│   │                │      │  Auto-cleanup   │                   │
+│   │                │      │  (Cron @midnight)│                   │
 │   └───────┬────────┘      └───────┬─────────┘                   │
 │           └──────────┬────────────┘                             │
 │                      ▼  Mongoose ODM                            │
@@ -117,8 +119,9 @@ cafe-system/
 │       └── order/
 │           ├── order.schema.ts
 │           ├── order.module.ts
-│           ├── order.service.ts      ← Business logic ออเดอร์ + คำนวณราคา
-│           ├── order.controller.ts   ← Routes ออเดอร์
+│           ├── order.service.ts           ← Business logic ออเดอร์ + คำนวณราคา
+│           ├── order.controller.ts        ← Routes ออเดอร์
+│           ├── order-cleanup.service.ts   ← Cron job ลบ orders เกิน 3 วัน
 │           └── dto/
 │               ├── create-order.dto.ts
 │               └── update-order-status.dto.ts
@@ -126,14 +129,17 @@ cafe-system/
 └── frontend/                   ← Next.js 14 App Router
     └── src/
         ├── app/
-        │   ├── page.tsx              ← Redirect → /menu
+        │   ├── page.tsx              ← Redirect → /order
         │   ├── layout.tsx            ← Root layout
         │   ├── globals.css
-        │   └── (admin)/             ← Route Group สำหรับ Admin
-        │       ├── layout.tsx        ← Sidebar layout
-        │       ├── menu/page.tsx     ← หน้าจัดการเมนู
-        │       ├── orders/page.tsx   ← หน้าดูออเดอร์
-        │       └── dashboard/page.tsx← หน้าสรุปยอดขาย
+        │   ├── (admin)/             ← Route Group สำหรับ Admin
+        │   │   ├── layout.tsx        ← Sidebar layout
+        │   │   ├── menu/page.tsx     ← หน้าจัดการเมนู
+        │   │   ├── orders/page.tsx   ← หน้าดูออเดอร์
+        │   │   └── dashboard/page.tsx← หน้าสรุปยอดขาย
+        │   └── (user)/              ← Route Group สำหรับลูกค้า
+        │       ├── layout.tsx        ← User layout + CartProvider
+        │       └── order/page.tsx    ← หน้าสั่งออเดอร์ (POS)
         ├── components/
         │   ├── admin/
         │   │   ├── Sidebar.tsx
@@ -141,12 +147,18 @@ cafe-system/
         │   │   ├── MenuFormModal.tsx
         │   │   ├── DeleteConfirmModal.tsx
         │   │   └── OrderTable.tsx
+        │   ├── user/
+        │   │   ├── MenuGrid.tsx          ← Grid เมนูสำหรับลูกค้า
+        │   │   ├── CartDrawer.tsx        ← ตะกร้าสินค้า + ปรับจำนวน
+        │   │   └── OrderConfirmModal.tsx ← ยืนยันและส่งออเดอร์
         │   └── ui/
         │       ├── CategoryBadge.tsx
         │       ├── StatCard.tsx
         │       ├── Toast.tsx
         │       ├── TabBar.tsx
         │       └── FilterChips.tsx
+        ├── context/
+        │   └── CartContext.tsx        ← React Context จัดการตะกร้า
         └── lib/
             ├── types.ts              ← TypeScript interfaces ทั้งหมด
             └── api.ts                ← Fetch functions ทั้งหมด
@@ -222,7 +234,8 @@ npm run dev
 
 #### 4. เปิดใช้งาน
 
-ไปที่ `http://localhost:3000` — ระบบ redirect ไปหน้า `/menu` อัตโนมัติ
+ไปที่ `http://localhost:3000` — ระบบ redirect ไปหน้า `/order` (หน้าสั่งออเดอร์ลูกค้า) อัตโนมัติ
+Admin dashboard อยู่ที่ `/menu`, `/orders`, `/dashboard`
 
 ---
 
@@ -247,6 +260,7 @@ Base URL (production): `https://cafe-system-production.up.railway.app`
 | `GET`    | `/orders`            | ดูออเดอร์ทั้งหมด    | —                                        |
 | `PATCH`  | `/orders/:id/status` | เปลี่ยนสถานะ        | `{ status: "finished" \| "unfinished" }` |
 | `GET`    | `/orders/summary`    | สรุปยอดขาย         | —                                        |
+| `DELETE` | `/orders/cleanup`    | ลบ orders เกิน 3 วัน (manual trigger) | —                             |
 
 ### ตัวอย่าง Request
 
@@ -462,6 +476,18 @@ Client                        Backend                       MongoDB
 - สถิติ: จำนวนออเดอร์ทั้งหมด, ยอดขายรวม, ยอดเฉลี่ยต่อออเดอร์
 - ตารางออเดอร์ล่าสุด 10 รายการ
 
+### `/order` — สั่งออเดอร์ (ลูกค้า / POS)
+- แสดงเมนูทั้งหมดเป็น Grid card (responsive 1-2-3 columns)
+- กรอง category (All / Coffee / Tea / Other) + ค้นหาชื่อเมนู
+- เพิ่มลงตะกร้า / ปรับจำนวน +/- (max 20 ต่อรายการ)
+- Desktop: Cart sidebar ด้านขวา / Mobile: floating button + bottom drawer
+- ยืนยันออเดอร์ผ่าน modal → ส่ง `POST /orders` (ไม่ส่งราคา)
+- แสดงสรุปออเดอร์เมื่อสำเร็จ
+
+### Auto-cleanup (Backend Cron)
+- Cron job รันทุกเที่ยงคืน — ลบออเดอร์ที่เก่ากว่า 3 วันอัตโนมัติ
+- Manual trigger: `DELETE /orders/cleanup`
+
 ---
 
 ## Design System
@@ -549,7 +575,9 @@ Client                        Backend                       MongoDB
 - **Server-side Price** — ราคาคำนวณที่ backend เสมอ ไม่รับจาก client
 - **Embedded Snapshot** — Order เก็บสำเนาข้อมูลเมนู ณ เวลาสั่ง ไม่ใช่ reference
 - **Centralized API** — Frontend รวม fetch ทั้งหมดไว้ที่ `lib/api.ts` ไฟล์เดียว
-- **Route Groups** — ใช้ Next.js Route Group `(admin)/` แยก layout สำหรับ admin พร้อมรองรับ `(user)/` ในอนาคต
+- **Route Groups** — ใช้ Next.js Route Group `(admin)/` แยก layout สำหรับ admin และ `(user)/` สำหรับหน้าลูกค้า
+- **Cart Context** — React Context จัดการตะกร้าฝั่งลูกค้า แยก state ออกจาก component
+- **Auto-cleanup** — Cron job ลบออเดอร์เก่าอัตโนมัติทุกเที่ยงคืน ด้วย `@nestjs/schedule`
 
 ---
 
@@ -557,30 +585,13 @@ Client                        Backend                       MongoDB
 
 ฟีเจอร์ที่วางแผนพัฒนาต่อ - เรียงตามลำดับความสำคัญ
 
-### 1. หน้าสั่งออเดอร์ฝั่งลูกค้า (POS-style)
+### ~~1. หน้าสั่งออเดอร์ฝั่งลูกค้า (POS-style)~~ ✅ Done
 
-Route group `(user)/` แยกจาก `(admin)/` — ลูกค้าสั่งเองผ่าน browser
-
-```
-(user)/
-└── order/
-    ├── page.tsx         ← MenuGrid แสดงเมนูทั้งหมด
-    └── components/
-        ├── MenuGrid.tsx      ← card เมนู + ปุ่มเพิ่ม/ลด quantity
-        ├── CartDrawer.tsx    ← ลิ้นชักตะกร้า slide จากขวา
-        └── ConfirmModal.tsx  ← ยืนยันก่อนสั่ง
-```
-
-**Behavior:**
-- แสดงเมนูที่ `isActive: true` เป็น grid card
-- กด card เพื่อเพิ่มลงตะกร้า / กด + − เพื่อปรับจำนวน
-- CartDrawer แสดงรายการและราคารวม (คำนวณ client-side เพื่อ preview เท่านั้น)
-- กด "ยืนยันออเดอร์" → `POST /orders` → backend คำนวณราคาจริง
-- ใช้ React Context สำหรับ cart state — ไม่ต้องแก้ backend เลย
+เสร็จแล้ว — อยู่ที่ route `(user)/order/` พร้อม CartContext, MenuGrid, CartDrawer, OrderConfirmModal
 
 ---
 
-### 2. Authentication — Admin Protection
+### 1. Authentication — Admin Protection
 
 ป้องกัน `/admin` ด้วย JWT-based auth
 
@@ -631,18 +642,9 @@ User  → POST /menu   (ไม่มี token)
 
 ---
 
-### 3. Auto-clear Orders เกิน 3 วัน
+### ~~2. Auto-clear Orders เกิน 3 วัน~~ ✅ Done
 
-```typescript
-// ใน OrderModule หรือ CleanupModule
-@Cron('0 0 * * *')  // ทุกคืนเที่ยงคืน
-async deleteOldOrders() {
-  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-  await this.orderModel.deleteMany({ createdAt: { $lt: cutoff } });
-}
-```
-
-Stack: `@nestjs/schedule`
+เสร็จแล้ว — `OrderCleanupService` ใช้ `@nestjs/schedule` รัน cron ทุกเที่ยงคืน + manual trigger `DELETE /orders/cleanup`
 
 ---
 
