@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { CartProvider } from '@/context/CartContext';
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
@@ -12,9 +13,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <h1 className="font-serif text-lg font-semibold text-gold tracking-widest uppercase">
               Cafe Order
             </h1>
-            <span className="text-xs text-muted uppercase tracking-widest">
-              Menu
-            </span>
+            <Link
+              href="/menu"
+              className="rounded-lg border border-cafe-border bg-elevated px-3 py-1.5 text-xs text-muted uppercase tracking-widest hover:text-primary hover:border-gold/50 transition-colors"
+            >
+              Admin
+            </Link>
           </div>
         </header>
 
