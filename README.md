@@ -8,12 +8,29 @@
 
 ## ทดลองใช้งานได้เลย (Live Demo)
 
-| Service  | URL                                                                 |
-| -------- | ------------------------------------------------------------------- |
-| Frontend | https://frontend-production-0524.up.railway.app                     |
-| Backend  | https://cafe-system-production.up.railway.app                       |
+**เปิด browser แล้วไปที่ URL ด้านล่างได้เลย** ระบบ deploy อยู่บน Railway ทั้งหมด ไม่ต้องติดตั้งอะไร
 
-**เปิด browser แล้วไปที่ URL ด้านบนได้เลย** ระบบ deploy อยู่บน Railway ทั้งหมด ไม่ต้องติดตั้งอะไร
+### Customer (สั่งออเดอร์)
+
+| หน้า | URL |
+| ---- | --- |
+| สั่งออเดอร์ (POS) | [https://frontend-production-0524.up.railway.app/order](https://frontend-production-0524.up.railway.app/order) |
+
+- เลือกเมนู → เพิ่มลงตะกร้า → กดสั่ง → เสร็จ!
+
+### Admin (จัดการร้าน)
+
+| หน้า | URL |
+| ---- | --- |
+| จัดการเมนู (CRUD) | [https://frontend-production-0524.up.railway.app/menu](https://frontend-production-0524.up.railway.app/menu) |
+| ดูออเดอร์ทั้งหมด | [https://frontend-production-0524.up.railway.app/orders](https://frontend-production-0524.up.railway.app/orders) |
+| สรุปยอดขาย (Dashboard) | [https://frontend-production-0524.up.railway.app/dashboard](https://frontend-production-0524.up.railway.app/dashboard) |
+
+### Backend API
+
+| Service | URL |
+| ------- | --- |
+| API Server | [https://cafe-system-production.up.railway.app](https://cafe-system-production.up.railway.app) |
 
 ### ลองใช้ API โดยตรง
 
