@@ -21,12 +21,12 @@ export class OrderService {
 
     for (const item of createOrderDto.items) {
       const menuItem = await this.menuItemModel
-        .findById(item.menuItemId)
+        .findOne({ _id: item.menuItemId, isActive: true })
         .exec();
 
       if (!menuItem) {
         throw new NotFoundException(
-          `Menu item with ID "${item.menuItemId}" not found`,
+          `Menu item "${item.menuItemId}" not found or unavailable`,
         );
       }
 
