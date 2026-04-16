@@ -137,6 +137,10 @@ describe('OrderService', () => {
       await expect(
         service.create({ items: [{ menuItemId: mockMenuItemCoffee._id, quantity: 1 }] }),
       ).rejects.toThrow(NotFoundException);
+      expect(mockMenuItemModel.findOne).toHaveBeenCalledWith({
+        _id: mockMenuItemCoffee._id,
+        isActive: true,
+      });
     });
   });
 
