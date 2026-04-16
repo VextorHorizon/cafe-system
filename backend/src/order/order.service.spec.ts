@@ -36,7 +36,7 @@ const mockOrderModel = {
 };
 
 const mockMenuItemModel = {
-  findById: jest.fn(),
+  findOne: jest.fn(),
 };
 
 describe('OrderService', () => {
@@ -70,7 +70,7 @@ describe('OrderService', () => {
 
   describe('create', () => {
     it('should snapshot price from DB and calculate totalPrice correctly (single item)', async () => {
-      mockMenuItemModel.findById.mockReturnValue({
+      mockMenuItemModel.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(mockMenuItemCoffee),
       });
       const result = await service.create({
@@ -81,7 +81,7 @@ describe('OrderService', () => {
     });
 
     it('should calculate totalPrice for multiple items', async () => {
-      mockMenuItemModel.findById
+      mockMenuItemModel.findOne
         .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(mockMenuItemCoffee) }) // 65
         .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(mockMenuItemTea) });   // 40
 
@@ -122,11 +122,20 @@ describe('OrderService', () => {
     });
 
     it('should throw NotFoundException when menuItemId does not exist', async () => {
-      mockMenuItemModel.findById.mockReturnValue({
+      mockMenuItemModel.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
       await expect(
         service.create({ items: [{ menuItemId: 'nonexistent', quantity: 1 }] }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException when menu item is inactive', async () => {
+      mockMenuItemModel.findOne.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+      await expect(
+        service.create({ items: [{ menuItemId: mockMenuItemCoffee._id, quantity: 1 }] }),
       ).rejects.toThrow(NotFoundException);
     });
   });
