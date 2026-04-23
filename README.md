@@ -266,7 +266,7 @@ Base URL (production): `https://cafe-system-production.up.railway.app`
 | -------- | ------------ | --------------------- | ------------------------------- |
 | `GET`    | `/menu`      | ดูเมนูทั้งหมด (active) | —                               |
 | `POST`   | `/menu`      | เพิ่มเมนูใหม่          | `{ name, price, category }`     |
-| `PATCH`  | `/menu/:id`  | แก้ไขเมนู             | `{ name?, price?, category? }`  |
+| `PATCH`  | `/menu/:id`  | แก้ไขเมนู             | `{ name?, price?, category?, isActive? }`  |
 | `DELETE` | `/menu/:id`  | ลบเมนู               | —                               |
 
 ### Orders
@@ -293,7 +293,7 @@ curl -X POST https://cafe-system-production.up.railway.app/orders \
   -d '{"items": [{"menuItemId": "<id>", "quantity": 2}]}'
 ```
 
-### วิธีการทดสอบ Order แบบ Step-by-Step (ฉบับยังไม่มี Frontend User Menu)
+### วิธีการทดสอบ Order แบบ Step-by-Step ผ่าน cURL
 
 ทำตามลำดับนี้เพื่อทดสอบการสั่งออเดอร์ครบ loop:
 

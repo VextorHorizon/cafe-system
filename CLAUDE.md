@@ -84,7 +84,7 @@ FRONTEND_URL=http://localhost:3000
 
 ---
 
-## Frontend (IN PROGRESS)
+## Frontend (DONE)
 
 ### Stack
 - Next.js 14 App Router + TypeScript
@@ -92,28 +92,39 @@ FRONTEND_URL=http://localhost:3000
 - native fetch (no axios)
 - useState + useEffect (no Redux/Zustand)
 
-### Target Structure
+### Actual Structure
 ```
 src/
 ├── app/
 │   ├── layout.tsx
-│   ├── page.tsx                  ← redirect → /menu
-│   └── (admin)/
-│       ├── layout.tsx            ← Sidebar
-│       ├── menu/page.tsx         ← Menu CRUD
-│       ├── orders/page.tsx       ← Order list
-│       └── dashboard/page.tsx    ← Stats + revenue
+│   ├── page.tsx                  ← redirect → /order
+│   ├── (admin)/
+│   │   ├── layout.tsx            ← Sidebar
+│   │   ├── menu/page.tsx         ← Menu CRUD
+│   │   ├── orders/page.tsx       ← Order list
+│   │   └── dashboard/page.tsx    ← Stats + revenue
+│   └── (user)/
+│       ├── layout.tsx            ← CartProvider + header
+│       └── order/page.tsx        ← POS-style customer order page
 ├── components/
 │   ├── ui/
 │   │   ├── CategoryBadge.tsx
 │   │   ├── StatCard.tsx
-│   │   └── Toast.tsx
-│   └── admin/
-│       ├── Sidebar.tsx
-│       ├── MenuTable.tsx
-│       ├── MenuFormModal.tsx
-│       ├── DeleteConfirmModal.tsx
-│       └── OrderTable.tsx
+│   │   ├── Toast.tsx
+│   │   ├── FilterChips.tsx
+│   │   └── TabBar.tsx
+│   ├── admin/
+│   │   ├── Sidebar.tsx
+│   │   ├── MenuTable.tsx
+│   │   ├── MenuFormModal.tsx
+│   │   ├── DeleteConfirmModal.tsx
+│   │   └── OrderTable.tsx
+│   └── user/
+│       ├── MenuGrid.tsx
+│       ├── CartDrawer.tsx
+│       └── OrderConfirmModal.tsx
+├── context/
+│   └── CartContext.tsx           ← cart state (React Context)
 └── lib/
     ├── types.ts                  ← ALL interfaces here
     └── api.ts                    ← ALL fetch functions here
@@ -127,10 +138,10 @@ src/
 5. `"use client"` เฉพาะไฟล์ที่มี useState หรือ event handler
 6. ห้าม `any` ใน TypeScript
 
-### Scalability — Route Groups
+### Route Groups
 ```
-(admin)/   ← done here
-(user)/    ← future, ยังไม่ทำ — แค่เตรียม structure ไว้
+(admin)/   ← done
+(user)/    ← done — /order POS page with CartContext
 ```
 
 ### Design System
@@ -182,34 +193,29 @@ cd frontend && npm run dev        ← port 3000
 ```
 
 ## Current Status
-- [x] Backend — MenuModule CRUD
-- [x] Backend — OrderModule + validation + price calculation
-- [x] Backend — seed script
-- [x] Frontend — setup + lib/types.ts + lib/api.ts
-- [x] Frontend — Sidebar + layout
-- [x] Frontend — /menu page (CRUD)
-- [x] Frontend — /admin orders page 
-- [x] Frontend — /admin dashboard page
-Optional(Must have)
-- [ ]  Frontend — /customer order menu (POS Style)
-- [ ]  Backend + Frontend — Linking API endpoint to customer frontend 
-- [x] (Optional) Backend + Frontend — Order status toggle (finished / unfinished)
+
+### Backend
+- [x] MenuModule CRUD
+- [x] OrderModule + validation + price calculation (blocks inactive items)
+- [x] seed script (5 default menus)
+- [x] Order status toggle (finished / unfinished)
+- [x] Auto-clear orders older than 3 days (`order-cleanup.service.ts`)
+- [x] `isActive` in UpdateMenuDto — inactive items blocked at order creation
+
+### Frontend
+- [x] setup + lib/types.ts + lib/api.ts
+- [x] Sidebar + admin layout
+- [x] /admin/menu page (CRUD)
+- [x] /admin/orders page (list + status toggle)
+- [x] /admin/dashboard page (stats + revenue)
+- [x] /order page — POS-style customer menu (MenuGrid + CartDrawer + OrderConfirmModal)
+- [x] CartContext — cart state management
+- [x] API linked end-to-end (customer → POST /orders)
 
 ---
 
 ## Roadmap
 
-### 1. Frontend — User Order Page
-- Route group `(user)/` แยกจาก `(admin)/`
-- หน้า `/order` — MenuGrid เลือกเมนู + CartDrawer + Confirm
-- ใช้ React Context สำหรับ cart state
-- เรียก `POST /orders` เดิม — ไม่ต้องแก้ backend
-
-### 2. Backend — Auto-clear Orders เกิน 3 วัน
-- ใช้ `@nestjs/schedule` (cron job)
-- รันทุกคืน เที่ยงคืน — ลบ orders ที่ `createdAt < now - 3 days`
-- เพิ่ม `CleanupModule` หรือใส่ใน `OrderModule`
-
-### 3. UI ใหม่
+### UI Redesign (next)
 - ออกแบบ design system ใหม่
 - อัปเดต Tailwind config + components ทั้งหมด
