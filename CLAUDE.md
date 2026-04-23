@@ -219,3 +219,44 @@ cd frontend && npm run dev        ← port 3000
 ### UI Redesign (next)
 - ออกแบบ design system ใหม่
 - อัปเดต Tailwind config + components ทั้งหมด
+
+---
+
+## UI Mockup Reference
+
+**File:** `mockup.html` (root of repo) — open directly in any browser, no server needed.
+
+### What the mockup covers
+Single HTML file, React 18 via Babel CDN, zero dependencies. Implements the full proposed redesign:
+
+| View | Description |
+|------|-------------|
+| Dashboard | Stat cards (revenue, orders, status) + full orders table with totals |
+| จัดการเมนู | CRUD table, category filter, add/edit modal, delete confirm modal, toggle active |
+| รายการออเดอร์ | Filter by status, stat cards, status toggle, amber row tint on pending |
+| สั่งเมนู (POS) | Menu grid, cart drawer, qty steppers, order confirm modal |
+
+### Design tokens used in mockup
+```
+--bg:         #0c0c10   (main background)
+--surface:    #0f0f14   (card background)
+--surface-2:  #12121a   (elevated / inputs)
+--border:     #1e1e2a
+--text:       #e8e6f0
+--text-2:     #b8b5c8
+--muted:      #5a5870
+--sidebar-bg: #080810
+--gold:       #c9a96e   (primary CTA)
+--green:      #4caf8a
+--amber:      #c9833a
+--red:        #e05252
+```
+
+### Template source
+Layout structure and component patterns adapted from the **Thai BBQ Staff Dashboard Style Template** (sidebar shell, StatCard, Badge, Btn, Modal, Data Table patterns). Colors remapped to the cafe system's dark palette.
+
+### How to use for redesign
+1. Open `mockup.html` in browser — all 4 views are fully interactive with live state
+2. Use the token table above when migrating to Tailwind — replace current Tailwind arbitrary values with CSS variables
+3. Component names in mockup (`StatCard`, `Badge`, `Btn`, `Dot`, `FL`) map 1:1 to planned `src/components/ui/` files
+4. Inter font for all numbers, Sarabun for Thai labels — replaces current Georgia serif

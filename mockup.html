@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cafe Management System — Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0c0c10; --surface:#0f0f14; --surface-2:#12121a;
+      --border:#1e1e2a; --border-strong:#2a2a3a;
+      --text:#e8e6f0; --text-2:#b8b5c8; --muted:#5a5870; --muted-2:#3d3b4d;
+      --sidebar-bg:#080810; --gold:#c9a96e;
+      --gold-bg:rgba(201,169,110,0.1); --gold-bd:rgba(201,169,110,0.3);
+      --green:#4caf8a; --green-bg:#0e1f1a; --green-bd:#1a3028;
+      --amber:#c9833a; --amber-bg:#2a1a0e; --amber-bd:#3d2510;
+      --red:#e05252; --red-bg:#1f0e0e; --red-bd:#301515;
+      --blue:#6b9fe8; --blue-bg:#0e1524; --blue-bd:#1a2540;
+      --purple:#8b7fcf; --purple-bg:#16161e; --purple-bd:#252030;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden;font-family:'Sarabun',sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg)}
+    input,button,select{font-family:'Sarabun',sans-serif}
+    button{cursor:pointer}
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes modalIn{from{opacity:0;transform:scale(0.97) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    @keyframes slideRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    .fi{animation:fadeIn 0.18s ease-out both}
+    .view-pad{padding:24px 28px}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── Tokens ────────────────────────────────────────────────────────────────────
+const C = {
+  bg:'#0c0c10', surface:'#0f0f14', surface2:'#12121a',
+  border:'#1e1e2a', borderStrong:'#2a2a3a',
+  text:'#e8e6f0', text2:'#b8b5c8', muted:'#5a5870', muted2:'#3d3b4d',
+  sidebarBg:'#080810', gold:'#c9a96e',
+  goldBg:'rgba(201,169,110,0.1)', goldBd:'rgba(201,169,110,0.3)',
+  green:'#4caf8a', greenBg:'#0e1f1a', greenBd:'#1a3028',
+  amber:'#c9833a', amberBg:'#2a1a0e', amberBd:'#3d2510',
+  red:'#e05252', redBg:'#1f0e0e', redBd:'#301515',
+  blue:'#6b9fe8', blueBg:'#0e1524', blueBd:'#1a2540',
+  purple:'#8b7fcf', purpleBg:'#16161e', purpleBd:'#252030',
+};
+
+// ── Primitives ────────────────────────────────────────────────────────────────
+function Dot({color='gray'}) {
+  const map = {green:C.green,amber:C.amber,red:C.red,gray:C.muted,blue:C.blue,gold:C.gold};
+  return <span style={{display:'inline-block',width:7,height:7,borderRadius:'50%',background:map[color]||C.muted,flexShrink:0}} />;
+}
+
+function Badge({color='gray',children}) {
+  const v = {
+    gray:{background:C.surface2,color:C.muted,border:`1px solid ${C.border}`},
+    green:{background:C.greenBg,color:C.green,border:`1px solid ${C.greenBd}`},
+    amber:{background:C.amberBg,color:C.amber,border:`1px solid ${C.amberBd}`},
+    red:{background:C.redBg,color:C.red,border:`1px solid ${C.redBd}`},
+    blue:{background:C.blueBg,color:C.blue,border:`1px solid ${C.blueBd}`},
+    gold:{background:C.goldBg,color:C.gold,border:`1px solid ${C.goldBd}`},
+    purple:{background:C.purpleBg,color:C.purple,border:`1px solid ${C.purpleBd}`},
+    coffee:{background:'#2a1a0e',color:'#c9833a',border:'1px solid #3d2510'},
+    tea:{background:'#0e1f1a',color:'#4caf8a',border:'1px solid #1a3028'},
+    other:{background:'#16161e',color:'#8b7fcf',border:'1px solid #252030'},
+  };
+  return <span style={{...v[color],padding:'2px 7px',borderRadius:4,fontSize:11,fontWeight:700,letterSpacing:0.1,whiteSpace:'nowrap',display:'inline-flex',alignItems:'center',gap:4}}>{children}</span>;
+}
+
+function Btn({variant='primary',size='md',onClick,disabled,children,style={}}) {
+  const v = {
+    primary:{background:C.gold,color:'#0c0c10',border:'none'},
+    ghost:{background:'transparent',color:C.muted,border:`1px solid ${C.border}`},
+    danger:{background:C.redBg,color:C.red,border:`1px solid ${C.redBd}`},
+    success:{background:C.greenBg,color:C.green,border:`1px solid ${C.greenBd}`},
+    muted:{background:C.surface2,color:C.text2,border:`1px solid ${C.border}`},
+  };
+  const s = {
+    xs:{padding:'4px 9px',fontSize:12,fontWeight:600},
+    sm:{padding:'7px 13px',fontSize:13,fontWeight:600},
+    md:{padding:'9px 16px',fontSize:14,fontWeight:600},
+    lg:{padding:'12px 20px',fontSize:15,fontWeight:700},
+  };
+  return (
+    <button onClick={onClick} disabled={disabled} style={{
+      display:'inline-flex',alignItems:'center',gap:5,borderRadius:6,flexShrink:0,
+      opacity:disabled?0.45:1,cursor:disabled?'not-allowed':'pointer',transition:'opacity 0.1s',
+      ...v[variant],...s[size],...style
+    }}>{children}</button>
+  );
+}
+
+function FL({children}) {
+  return <div style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:0.6,marginBottom:7}}>{children}</div>;
+}
+
+function HR() { return <div style={{height:1,background:C.border}} />; }
+
+function Ic({path,size=16,sw=1.8,color}) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color||'currentColor'} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+      <path d={path}/>
+    </svg>
+  );
+}
+
+function StatCard({label,value,sub,dot='gray'}) {
+  const isNum = typeof value === 'number' || (typeof value === 'string' && value.startsWith('฿'));
+  return (
+    <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:8,padding:'14px 16px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:8}}>
+        <Dot color={dot}/>
+        <span style={{fontSize:10,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:0.6}}>{label}</span>
+      </div>
+      <div style={{fontSize:22,fontWeight:800,lineHeight:1,fontFamily:isNum?'Inter,sans-serif':'Sarabun,sans-serif',color:C.text}}>{value}</div>
+      {sub && <div style={{fontSize:11,color:C.muted2,marginTop:4}}>{sub}</div>}
+    </div>
+  );
+}
+
+// ── Sample data ───────────────────────────────────────────────────────────────
+const MENU_INIT = [
+  {_id:'1',name:'Espresso',price:65,category:'coffee',isActive:true},
+  {_id:'2',name:'Cappuccino',price:85,category:'coffee',isActive:true},
+  {_id:'3',name:'Latte',price:90,category:'coffee',isActive:true},
+  {_id:'4',name:'Americano',price:70,category:'coffee',isActive:true},
+  {_id:'5',name:'Thai Milk Tea',price:75,category:'tea',isActive:true},
+  {_id:'6',name:'Green Tea Latte',price:85,category:'tea',isActive:true},
+  {_id:'7',name:'Chamomile',price:60,category:'tea',isActive:false},
+  {_id:'8',name:'Croissant',price:55,category:'other',isActive:true},
+  {_id:'9',name:'Cheesecake',price:95,category:'other',isActive:true},
+  {_id:'10',name:'Brownie',price:65,category:'other',isActive:true},
+];
+
+const ORDERS_INIT = [
+  {_id:'ORD-001',items:[{name:'Espresso',quantity:2,unitPrice:65},{name:'Croissant',quantity:1,unitPrice:55}],totalPrice:185,status:'finished',createdAt:'2026-04-23T08:30:00'},
+  {_id:'ORD-002',items:[{name:'Cappuccino',quantity:1,unitPrice:85},{name:'Cheesecake',quantity:1,unitPrice:95}],totalPrice:180,status:'unfinished',createdAt:'2026-04-23T09:15:00'},
+  {_id:'ORD-003',items:[{name:'Thai Milk Tea',quantity:2,unitPrice:75}],totalPrice:150,status:'finished',createdAt:'2026-04-23T09:45:00'},
+  {_id:'ORD-004',items:[{name:'Latte',quantity:1,unitPrice:90},{name:'Brownie',quantity:2,unitPrice:65}],totalPrice:220,status:'unfinished',createdAt:'2026-04-23T10:00:00'},
+  {_id:'ORD-005',items:[{name:'Americano',quantity:3,unitPrice:70}],totalPrice:210,status:'finished',createdAt:'2026-04-23T10:30:00'},
+  {_id:'ORD-006',items:[{name:'Green Tea Latte',quantity:1,unitPrice:85},{name:'Cheesecake',quantity:1,unitPrice:95}],totalPrice:180,status:'unfinished',createdAt:'2026-04-23T11:00:00'},
+];
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function DashboardView({orders,menu}) {
+  const totalRev = orders.reduce((s,o)=>s+o.totalPrice,0);
+  const done = orders.filter(o=>o.status==='finished').length;
+  const activeMenu = menu.filter(m=>m.isActive).length;
+  const pending = orders.filter(o=>o.status==='unfinished').length;
+
+  return (
+    <div className="fi view-pad" style={{height:'100%',overflowY:'auto'}}>
+      <div style={{marginBottom:20}}>
+        <div style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:4}}>Dashboard</div>
+        <div style={{fontSize:12,color:C.muted}}>ภาพรวมวันนี้ — 23 เมษายน 2026</div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:24}}>
+        <StatCard label="รายรับรวม" value={`฿${totalRev.toLocaleString()}`} sub="วันนี้" dot="gold"/>
+        <StatCard label="ออเดอร์ทั้งหมด" value={orders.length} sub="รายการ" dot="blue"/>
+        <StatCard label="เสร็จแล้ว" value={done} sub={`${Math.round(done/orders.length*100)}% ของทั้งหมด`} dot="green"/>
+        <StatCard label="รอดำเนินการ" value={pending} sub="รายการ" dot="amber"/>
+      </div>
+
+      {pending > 0 && (
+        <div style={{background:C.amberBg,border:`1px solid ${C.amberBd}`,borderRadius:8,padding:'11px 16px',display:'flex',gap:10,alignItems:'center',marginBottom:20}}>
+          <Ic path="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01" size={16} color={C.amber}/>
+          <span style={{fontSize:13,color:C.amber,fontWeight:600}}>มี {pending} ออเดอร์ที่รอดำเนินการ</span>
+        </div>
+      )}
+
+      <div style={{marginBottom:12}}>
+        <span style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:0.4}}>ออเดอร์ล่าสุด</span>
+      </div>
+      <div style={{border:`1px solid ${C.border}`,borderRadius:8,overflow:'hidden',background:C.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
+          <thead>
+            <tr style={{background:C.surface2,borderBottom:`1px solid ${C.border}`}}>
+              {['Order ID','รายการ','ราคารวม','สถานะ','เวลา'].map(h=>(
+                <th key={h} style={{padding:'8px 14px',textAlign:'left',fontWeight:600,color:C.muted,fontSize:11,textTransform:'uppercase',letterSpacing:0.4,whiteSpace:'nowrap'}}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((o,i)=>(
+              <tr key={o._id} style={{borderBottom:i<orders.length-1?`1px solid ${C.border}`:'none'}}>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontSize:15,fontWeight:800,color:C.gold}}>#{o._id}</td>
+                <td style={{padding:'10px 14px',color:C.text2,fontSize:12}}>{o.items.map(it=>it.name).join(', ')}</td>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontWeight:800,color:C.text}}>฿{o.totalPrice}</td>
+                <td style={{padding:'10px 14px'}}><Badge color={o.status==='finished'?'green':'amber'}>{o.status==='finished'?'เสร็จแล้ว':'รอดำเนินการ'}</Badge></td>
+                <td style={{padding:'10px 14px',color:C.muted,fontFamily:'Inter,sans-serif',fontSize:12}}>
+                  {new Date(o.createdAt).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{borderTop:`2px solid ${C.border}`,background:C.surface2}}>
+              <td colSpan={2} style={{padding:'9px 14px',fontSize:11,fontWeight:700,color:C.muted}}>รวม {orders.length} ออเดอร์</td>
+              <td style={{padding:'9px 14px',fontFamily:'Inter,sans-serif',fontWeight:800,color:C.gold}}>฿{totalRev.toLocaleString()}</td>
+              <td colSpan={2}/>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── Menu View ─────────────────────────────────────────────────────────────────
+function MenuView({menu,setMenu}) {
+  const [filter,setFilter] = useState('all');
+  const [modal,setModal] = useState(false);
+  const [editItem,setEditItem] = useState(null);
+  const [form,setForm] = useState({name:'',price:'',category:'coffee'});
+  const [delItem,setDelItem] = useState(null);
+
+  const filtered = filter==='all'?menu:menu.filter(m=>m.category===filter);
+  const openAdd = ()=>{setForm({name:'',price:'',category:'coffee'});setEditItem(null);setModal(true);};
+  const openEdit = item=>{setForm({name:item.name,price:item.price,category:item.category});setEditItem(item);setModal(true);};
+  const closeModal = ()=>setModal(false);
+
+  const handleSave = ()=>{
+    if(!form.name||!form.price) return;
+    if(editItem) setMenu(menu.map(m=>m._id===editItem._id?{...m,...form,price:Number(form.price)}:m));
+    else setMenu([...menu,{_id:String(Date.now()),name:form.name,price:Number(form.price),category:form.category,isActive:true}]);
+    closeModal();
+  };
+
+  const toggleActive = id=>setMenu(menu.map(m=>m._id===id?{...m,isActive:!m.isActive}:m));
+  const doDelete = id=>{setMenu(menu.filter(m=>m._id!==id));setDelItem(null);};
+
+  return (
+    <div className="fi view-pad" style={{height:'100%',overflowY:'auto'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:20}}>
+        <div>
+          <div style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:4}}>จัดการเมนู</div>
+          <div style={{fontSize:12,color:C.muted}}>{menu.filter(m=>m.isActive).length} รายการที่เปิดใช้งาน / {menu.length} รายการทั้งหมด</div>
+        </div>
+        <Btn variant="primary" size="sm" onClick={openAdd}>
+          <Ic path="M12 5v14M5 12h14" size={14} color="#0c0c10"/> เพิ่มเมนู
+        </Btn>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:20}}>
+        <StatCard label="เมนูทั้งหมด" value={menu.length} dot="blue" sub="รายการ"/>
+        <StatCard label="เปิดใช้งาน" value={menu.filter(m=>m.isActive).length} dot="green" sub="รายการ"/>
+        <StatCard label="ปิดใช้งาน" value={menu.filter(m=>!m.isActive).length} dot="red" sub="รายการ"/>
+      </div>
+
+      <div style={{display:'flex',gap:6,marginBottom:16}}>
+        {[['all','ทั้งหมด'],['coffee','Coffee'],['tea','Tea'],['other','Other']].map(([v,l])=>(
+          <button key={v} onClick={()=>setFilter(v)} style={{
+            padding:'6px 12px',borderRadius:6,fontSize:13,cursor:'pointer',transition:'all 0.1s',
+            border:filter===v?`1.5px solid ${C.gold}`:`1.5px solid ${C.border}`,
+            background:filter===v?C.goldBg:C.surface,
+            color:filter===v?C.gold:C.text2,fontWeight:filter===v?700:400
+          }}>{l}</button>
+        ))}
+      </div>
+
+      <div style={{border:`1px solid ${C.border}`,borderRadius:8,overflow:'hidden',background:C.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
+          <thead>
+            <tr style={{background:C.surface2,borderBottom:`1px solid ${C.border}`}}>
+              {['#','ชื่อเมนู','ราคา','หมวดหมู่','สถานะ','จัดการ'].map(h=>(
+                <th key={h} style={{padding:'8px 14px',textAlign:'left',fontWeight:600,color:C.muted,fontSize:11,textTransform:'uppercase',letterSpacing:0.4}}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((item,i)=>(
+              <tr key={item._id} style={{borderBottom:i<filtered.length-1?`1px solid ${C.border}`:'none',background:!item.isActive?'rgba(224,82,82,0.03)':'transparent'}}>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontSize:14,fontWeight:800,color:C.muted2}}>{i+1}</td>
+                <td style={{padding:'10px 14px',color:C.text,fontWeight:600}}>{item.name}</td>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontWeight:800,color:C.text}}>฿{item.price}</td>
+                <td style={{padding:'10px 14px'}}><Badge color={item.category}>{item.category}</Badge></td>
+                <td style={{padding:'10px 14px'}}><Badge color={item.isActive?'green':'red'}>{item.isActive?'Active':'Inactive'}</Badge></td>
+                <td style={{padding:'10px 14px'}}>
+                  <div style={{display:'flex',gap:6}}>
+                    <Btn variant="muted" size="xs" onClick={()=>openEdit(item)}>แก้ไข</Btn>
+                    <Btn variant={item.isActive?'muted':'success'} size="xs" onClick={()=>toggleActive(item._id)}>{item.isActive?'ปิด':'เปิด'}</Btn>
+                    <Btn variant="danger" size="xs" onClick={()=>setDelItem(item)}>ลบ</Btn>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Add / Edit Modal */}
+      {modal && (
+        <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(0,0,0,0.65)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:10,width:'100%',maxWidth:420,animation:'modalIn 0.15s ease-out both'}}>
+            <div style={{padding:'18px 20px 14px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div>
+                <div style={{fontSize:15,fontWeight:700,color:C.text}}>{editItem?'แก้ไขเมนู':'เพิ่มเมนูใหม่'}</div>
+                <div style={{fontSize:12,color:C.muted,marginTop:2}}>กรอกข้อมูลเมนู</div>
+              </div>
+              <button onClick={closeModal} style={{width:28,height:28,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface2,color:C.muted,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+                <Ic path="M18 6L6 18M6 6l12 12" size={14}/>
+              </button>
+            </div>
+            <div style={{padding:'18px 20px',display:'flex',flexDirection:'column',gap:16}}>
+              <div>
+                <FL>ชื่อเมนู</FL>
+                <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="เช่น Espresso"
+                  style={{width:'100%',padding:'9px 12px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface2,color:C.text,fontSize:14,outline:'none'}}/>
+              </div>
+              <div>
+                <FL>ราคา (บาท)</FL>
+                <input type="number" value={form.price} onChange={e=>setForm({...form,price:e.target.value})} placeholder="65"
+                  style={{width:'100%',padding:'9px 12px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface2,color:C.text,fontSize:14,fontFamily:'Inter,sans-serif',fontWeight:700,outline:'none'}}/>
+              </div>
+              <div>
+                <FL>หมวดหมู่</FL>
+                <div style={{display:'flex',gap:8}}>
+                  {['coffee','tea','other'].map(c=>(
+                    <button key={c} onClick={()=>setForm({...form,category:c})} style={{
+                      flex:1,padding:'8px 0',borderRadius:6,fontSize:13,cursor:'pointer',transition:'all 0.1s',
+                      border:form.category===c?`1.5px solid ${C.gold}`:`1.5px solid ${C.border}`,
+                      background:form.category===c?C.goldBg:C.surface2,
+                      color:form.category===c?C.gold:C.text2,fontWeight:form.category===c?700:400
+                    }}>{c}</button>
+                  ))}
+                </div>
+              </div>
+              {form.price && (
+                <div style={{background:C.surface2,borderRadius:8,padding:'11px 14px',border:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <span style={{fontSize:13,color:C.muted}}>ราคาสินค้า</span>
+                  <span style={{fontSize:24,fontWeight:800,fontFamily:'Inter,sans-serif',color:C.gold}}>฿{Number(form.price)||0}</span>
+                </div>
+              )}
+            </div>
+            <div style={{padding:'12px 20px 20px',borderTop:`1px solid ${C.border}`,display:'flex',gap:8,justifyContent:'flex-end'}}>
+              <Btn variant="ghost" size="sm" onClick={closeModal}>ยกเลิก</Btn>
+              <Btn variant="primary" size="sm" onClick={handleSave} disabled={!form.name||!form.price}>{editItem?'บันทึก':'เพิ่มเมนู'}</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirm */}
+      {delItem && (
+        <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(0,0,0,0.65)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:10,width:'100%',maxWidth:360,padding:24,animation:'modalIn 0.15s ease-out both'}}>
+            <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:8}}>ยืนยันการลบ</div>
+            <div style={{fontSize:13,color:C.muted,marginBottom:20}}>ลบเมนู <strong style={{color:C.text}}>{delItem.name}</strong> ใช่หรือไม่?</div>
+            <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+              <Btn variant="ghost" size="sm" onClick={()=>setDelItem(null)}>ยกเลิก</Btn>
+              <Btn variant="danger" size="sm" onClick={()=>doDelete(delItem._id)}>ลบเมนู</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Orders View ───────────────────────────────────────────────────────────────
+function OrdersView({orders,setOrders}) {
+  const [filter,setFilter] = useState('all');
+  const shown = filter==='all'?orders:orders.filter(o=>o.status===filter);
+  const toggle = id=>setOrders(orders.map(o=>o._id===id?{...o,status:o.status==='finished'?'unfinished':'finished'}:o));
+  const totalRev = shown.reduce((s,o)=>s+o.totalPrice,0);
+
+  return (
+    <div className="fi view-pad" style={{height:'100%',overflowY:'auto'}}>
+      <div style={{marginBottom:20}}>
+        <div style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:4}}>รายการออเดอร์</div>
+        <div style={{fontSize:12,color:C.muted}}>ทั้งหมด {orders.length} รายการวันนี้</div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:24}}>
+        <StatCard label="ออเดอร์ทั้งหมด" value={shown.length} dot="blue" sub="รายการ"/>
+        <StatCard label="รายรับ" value={`฿${totalRev.toLocaleString()}`} dot="gold" sub="บาท"/>
+        <StatCard label="รอดำเนินการ" value={shown.filter(o=>o.status==='unfinished').length} dot="amber" sub="รายการ"/>
+      </div>
+
+      <div style={{display:'flex',gap:6,marginBottom:16}}>
+        {[['all','ทั้งหมด'],['unfinished','รอดำเนินการ'],['finished','เสร็จแล้ว']].map(([v,l])=>(
+          <button key={v} onClick={()=>setFilter(v)} style={{
+            padding:'6px 12px',borderRadius:6,fontSize:13,cursor:'pointer',transition:'all 0.1s',
+            border:filter===v?`1.5px solid ${C.gold}`:`1.5px solid ${C.border}`,
+            background:filter===v?C.goldBg:C.surface,
+            color:filter===v?C.gold:C.text2,fontWeight:filter===v?700:400
+          }}>{l}</button>
+        ))}
+      </div>
+
+      <div style={{border:`1px solid ${C.border}`,borderRadius:8,overflow:'hidden',background:C.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
+          <thead>
+            <tr style={{background:C.surface2,borderBottom:`1px solid ${C.border}`}}>
+              {['Order ID','รายการ','ราคารวม','สถานะ','เวลา','จัดการ'].map(h=>(
+                <th key={h} style={{padding:'8px 14px',textAlign:'left',fontWeight:600,color:C.muted,fontSize:11,textTransform:'uppercase',letterSpacing:0.4}}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((o,i)=>(
+              <tr key={o._id} style={{borderBottom:i<shown.length-1?`1px solid ${C.border}`:'none',background:o.status==='unfinished'?'rgba(201,131,58,0.03)':'transparent'}}>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontSize:15,fontWeight:800,color:C.gold}}>#{o._id}</td>
+                <td style={{padding:'10px 14px',color:C.text2,fontSize:12,maxWidth:220}}>
+                  {o.items.map(it=>`${it.name} ×${it.quantity}`).join(', ')}
+                </td>
+                <td style={{padding:'10px 14px',fontFamily:'Inter,sans-serif',fontWeight:800,color:C.text}}>฿{o.totalPrice}</td>
+                <td style={{padding:'10px 14px'}}><Badge color={o.status==='finished'?'green':'amber'}>{o.status==='finished'?'เสร็จแล้ว':'รอดำเนินการ'}</Badge></td>
+                <td style={{padding:'10px 14px',color:C.muted,fontFamily:'Inter,sans-serif',fontSize:12}}>
+                  {new Date(o.createdAt).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}
+                </td>
+                <td style={{padding:'10px 14px'}}>
+                  <Btn variant={o.status==='finished'?'muted':'success'} size="xs" onClick={()=>toggle(o._id)}>
+                    {o.status==='finished'?'เปิดอีกครั้ง':'ทำเสร็จแล้ว'}
+                  </Btn>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{borderTop:`2px solid ${C.border}`,background:C.surface2}}>
+              <td colSpan={2} style={{padding:'9px 14px',fontSize:11,fontWeight:700,color:C.muted}}>รวม {shown.length} ออเดอร์</td>
+              <td style={{padding:'9px 14px',fontFamily:'Inter,sans-serif',fontWeight:800,color:C.gold}}>฿{totalRev.toLocaleString()}</td>
+              <td colSpan={3}/>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── POS Order Page ────────────────────────────────────────────────────────────
+function OrderPage({menu,onPlaced}) {
+  const [cat,setCat] = useState('all');
+  const [cart,setCart] = useState([]);
+  const [cartOpen,setCartOpen] = useState(false);
+  const [confirmOpen,setConfirmOpen] = useState(false);
+  const [toast,setToast] = useState(false);
+
+  const active = menu.filter(m=>m.isActive);
+  const shown = cat==='all'?active:active.filter(m=>m.category===cat);
+
+  const addItem = item=>{
+    setCart(prev=>{
+      const ex=prev.find(c=>c._id===item._id);
+      return ex?prev.map(c=>c._id===item._id?{...c,qty:c.qty+1}:c):[...prev,{...item,qty:1}];
+    });
+  };
+  const removeItem = id=>setCart(prev=>prev.filter(c=>c._id!==id));
+  const changeQty = (id,d)=>setCart(prev=>prev.map(c=>c._id===id?{...c,qty:Math.max(1,c.qty+d)}:c));
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const count = cart.reduce((s,c)=>s+c.qty,0);
+
+  const handleOrder = ()=>{
+    const newOrder = {
+      _id:`ORD-${String(Date.now()).slice(-3)}`,
+      items:cart.map(c=>({name:c.name,quantity:c.qty,unitPrice:c.price})),
+      totalPrice:total, status:'unfinished',
+      createdAt:new Date().toISOString()
+    };
+    onPlaced(newOrder);
+    setCart([]); setConfirmOpen(false); setCartOpen(false);
+    setToast(true); setTimeout(()=>setToast(false),3000);
+  };
+
+  return (
+    <div className="fi" style={{height:'100%',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+      {/* Header */}
+      <div style={{padding:'0 24px',height:48,borderBottom:`1px solid ${C.border}`,background:C.surface,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        <span style={{fontSize:14,fontWeight:700,color:C.text}}>สั่งเมนู (POS)</span>
+        <button onClick={()=>setCartOpen(true)} style={{
+          position:'relative',padding:'7px 14px',borderRadius:6,
+          border:`1px solid ${C.goldBd}`,background:C.goldBg,color:C.gold,
+          fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:8
+        }}>
+          <Ic path="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" size={15} color={C.gold}/>
+          ตะกร้า
+          {count>0&&<span style={{position:'absolute',top:-6,right:-6,background:C.gold,color:'#0c0c10',borderRadius:'50%',width:18,height:18,fontSize:10,fontWeight:800,fontFamily:'Inter,sans-serif',display:'flex',alignItems:'center',justifyContent:'center'}}>{count}</span>}
+        </button>
+      </div>
+
+      <div style={{flex:1,overflowY:'auto',padding:'20px 24px'}}>
+        {toast&&(
+          <div style={{marginBottom:16,background:C.greenBg,border:`1px solid ${C.greenBd}`,borderRadius:8,padding:'11px 16px',display:'flex',alignItems:'center',gap:10,color:C.green,fontSize:13,fontWeight:600}}>
+            <Ic path="M20 6L9 17l-5-5" size={16} color={C.green}/> สั่งออเดอร์สำเร็จ! ขอบคุณที่ใช้บริการ
+          </div>
+        )}
+
+        <div style={{display:'flex',gap:6,marginBottom:20}}>
+          {[['all','ทั้งหมด'],['coffee','Coffee'],['tea','Tea'],['other','Other']].map(([v,l])=>(
+            <button key={v} onClick={()=>setCat(v)} style={{
+              padding:'6px 14px',borderRadius:6,fontSize:13,cursor:'pointer',transition:'all 0.1s',
+              border:cat===v?`1.5px solid ${C.gold}`:`1.5px solid ${C.border}`,
+              background:cat===v?C.goldBg:C.surface,
+              color:cat===v?C.gold:C.text2,fontWeight:cat===v?700:400
+            }}>{l}</button>
+          ))}
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(170px,1fr))',gap:12}}>
+          {shown.map(item=>{
+            const inCart=cart.find(c=>c._id===item._id);
+            return (
+              <div key={item._id} onClick={()=>addItem(item)} style={{
+                background:C.surface,border:`1px solid ${inCart?C.goldBd:C.border}`,
+                borderRadius:8,padding:'14px',cursor:'pointer',transition:'all 0.15s',
+                boxShadow:inCart?`0 0 0 1px ${C.goldBd}`:'none'
+              }}>
+                <div style={{marginBottom:8}}><Badge color={item.category}>{item.category}</Badge></div>
+                <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:6}}>{item.name}</div>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <span style={{fontFamily:'Inter,sans-serif',fontSize:18,fontWeight:800,color:C.gold}}>฿{item.price}</span>
+                  {inCart&&<span style={{background:C.goldBg,border:`1px solid ${C.goldBd}`,color:C.gold,borderRadius:4,padding:'2px 7px',fontSize:11,fontWeight:800,fontFamily:'Inter,sans-serif'}}>×{inCart.qty}</span>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Cart Drawer */}
+      {cartOpen&&(
+        <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(0,0,0,0.65)',display:'flex',justifyContent:'flex-end'}} onClick={()=>setCartOpen(false)}>
+          <div onClick={e=>e.stopPropagation()} style={{width:360,height:'100%',background:C.surface,borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',animation:'slideRight 0.2s ease-out both'}}>
+            <div style={{padding:'18px 20px 14px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{fontSize:15,fontWeight:700,color:C.text}}>ตะกร้าสินค้า</div>
+              <button onClick={()=>setCartOpen(false)} style={{width:28,height:28,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface2,color:C.muted,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+                <Ic path="M18 6L6 18M6 6l12 12" size={14}/>
+              </button>
+            </div>
+            <div style={{flex:1,overflowY:'auto',padding:'16px 20px',display:'flex',flexDirection:'column',gap:10}}>
+              {cart.length===0
+                ?<div style={{textAlign:'center',padding:40,color:C.muted,fontSize:13}}>ยังไม่มีสินค้าในตะกร้า</div>
+                :cart.map(item=>(
+                  <div key={item._id} style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:8,padding:'12px 14px'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                      <span style={{fontSize:14,fontWeight:600,color:C.text}}>{item.name}</span>
+                      <button onClick={()=>removeItem(item._id)} style={{color:C.muted,background:'none',border:'none',cursor:'pointer',padding:0,display:'flex'}}>
+                        <Ic path="M18 6L6 18M6 6l12 12" size={14}/>
+                      </button>
+                    </div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:10}}>
+                        <button onClick={()=>changeQty(item._id,-1)} style={{width:28,height:28,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                          <Ic path="M5 12h14" size={12}/>
+                        </button>
+                        <span style={{fontFamily:'Inter,sans-serif',fontSize:16,fontWeight:800,color:C.text,minWidth:24,textAlign:'center'}}>{item.qty}</span>
+                        <button onClick={()=>changeQty(item._id,1)} style={{width:28,height:28,borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                          <Ic path="M12 5v14M5 12h14" size={12}/>
+                        </button>
+                      </div>
+                      <span style={{fontFamily:'Inter,sans-serif',fontSize:16,fontWeight:800,color:C.gold}}>฿{item.price*item.qty}</span>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+            {cart.length>0&&(
+              <div style={{padding:'16px 20px',borderTop:`1px solid ${C.border}`}}>
+                <div style={{background:C.surface2,borderRadius:8,padding:'12px 14px',border:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+                  <span style={{fontSize:13,color:C.muted}}>ยอดรวมทั้งหมด</span>
+                  <span style={{fontFamily:'Inter,sans-serif',fontSize:24,fontWeight:800,color:C.gold}}>฿{total}</span>
+                </div>
+                <Btn variant="primary" size="md" onClick={()=>{setCartOpen(false);setConfirmOpen(true);}} style={{width:'100%',justifyContent:'center'}}>
+                  ยืนยันการสั่ง
+                </Btn>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Modal */}
+      {confirmOpen&&(
+        <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:10,width:'100%',maxWidth:400,animation:'modalIn 0.15s ease-out both'}}>
+            <div style={{padding:'18px 20px 14px',borderBottom:`1px solid ${C.border}`}}>
+              <div style={{fontSize:15,fontWeight:700,color:C.text}}>ยืนยันออเดอร์</div>
+              <div style={{fontSize:12,color:C.muted,marginTop:2}}>ตรวจสอบรายการก่อนสั่ง</div>
+            </div>
+            <div style={{padding:'16px 20px',display:'flex',flexDirection:'column',gap:8}}>
+              {cart.map(item=>(
+                <div key={item._id} style={{display:'flex',justifyContent:'space-between',fontSize:13}}>
+                  <span style={{color:C.text2}}>{item.name} <span style={{fontFamily:'Inter,sans-serif',color:C.muted}}>×{item.qty}</span></span>
+                  <span style={{fontFamily:'Inter,sans-serif',fontWeight:700,color:C.text}}>฿{item.price*item.qty}</span>
+                </div>
+              ))}
+              <HR/>
+              <div style={{background:C.surface2,borderRadius:8,padding:'11px 14px',border:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span style={{fontSize:13,color:C.muted}}>ยอดรวมทั้งหมด</span>
+                <span style={{fontFamily:'Inter,sans-serif',fontSize:24,fontWeight:800,color:C.gold}}>฿{total}</span>
+              </div>
+            </div>
+            <div style={{padding:'12px 20px 20px',borderTop:`1px solid ${C.border}`,display:'flex',gap:8,justifyContent:'flex-end'}}>
+              <Btn variant="ghost" size="sm" onClick={()=>setConfirmOpen(false)}>ยกเลิก</Btn>
+              <Btn variant="primary" size="sm" onClick={handleOrder}>สั่งเลย</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function Sidebar({view,setView,pendingCount}) {
+  const [time,setTime] = useState(new Date());
+  useEffect(()=>{const t=setInterval(()=>setTime(new Date()),1000);return()=>clearInterval(t);},[]);
+
+  const nav = [
+    {id:'dashboard',label:'Dashboard',path:'M18 20V10M12 20V4M6 20v-6M2 20h20'},
+    {id:'menu',label:'จัดการเมนู',path:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8'},
+    {id:'orders',label:'ออเดอร์',path:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',badge:pendingCount},
+    {id:'pos',label:'สั่งเมนู (POS)',path:'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0'},
+  ];
+
+  return (
+    <div style={{width:220,background:C.sidebarBg,display:'flex',flexDirection:'column',borderRight:'1px solid rgba(255,255,255,0.05)',flexShrink:0}}>
+      <div style={{padding:'20px 16px 16px',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>
+        <div style={{fontSize:15,fontWeight:800,color:'#fff'}}>☕ Cafe System</div>
+        <div style={{fontSize:11,color:'rgba(255,255,255,0.28)',marginTop:2}}>Admin Dashboard</div>
+      </div>
+      <div style={{padding:'12px 16px',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>
+        <div style={{fontFamily:'Inter,sans-serif',fontSize:20,fontWeight:700,color:'rgba(255,255,255,0.45)',letterSpacing:1}}>
+          {time.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+        </div>
+        <div style={{fontSize:10,color:'rgba(255,255,255,0.22)',marginTop:2}}>
+          {time.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'})}
+        </div>
+      </div>
+      <nav style={{flex:1,padding:'8px'}}>
+        {nav.map(item=>{
+          const active=view===item.id;
+          return (
+            <button key={item.id} onClick={()=>setView(item.id)} style={{
+              width:'100%',display:'flex',alignItems:'center',gap:9,
+              padding:'9px 10px',borderRadius:6,border:'none',cursor:'pointer',
+              background:active?'rgba(255,255,255,0.08)':'transparent',
+              color:active?'#fff':'rgba(255,255,255,0.48)',
+              fontWeight:active?700:400,fontSize:13,marginBottom:2,textAlign:'left',
+              transition:'all 0.1s'
+            }}>
+              <Ic path={item.path} size={16} sw={active?2:1.6} color={active?C.gold:undefined}/>
+              <span style={{flex:1}}>{item.label}</span>
+              {item.badge>0&&(
+                <span style={{background:C.amber,color:'#fff',borderRadius:9,minWidth:18,height:18,fontSize:10,fontWeight:800,fontFamily:'Inter,sans-serif',display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+      <div style={{padding:'12px 16px',borderTop:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',gap:6}}>
+        <div style={{width:7,height:7,borderRadius:'50%',background:C.green}}/>
+        <span style={{fontSize:11,color:'rgba(255,255,255,0.28)'}}>ระบบทำงานปกติ</span>
+      </div>
+    </div>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [view,setView] = useState('dashboard');
+  const [menu,setMenu] = useState(MENU_INIT);
+  const [orders,setOrders] = useState(ORDERS_INIT);
+
+  const addOrder = o=>setOrders(prev=>[o,...prev]);
+  const pending = orders.filter(o=>o.status==='unfinished').length;
+
+  const titles = {dashboard:'Dashboard',menu:'จัดการเมนู',orders:'รายการออเดอร์',pos:'สั่งเมนู (POS)'};
+
+  return (
+    <div style={{display:'flex',height:'100dvh',background:C.bg,overflow:'hidden'}}>
+      <Sidebar view={view} setView={setView} pendingCount={pending}/>
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        {/* Top bar */}
+        <div style={{height:48,background:C.surface,borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',padding:'0 24px',justifyContent:'space-between',flexShrink:0}}>
+          <span style={{fontSize:14,fontWeight:600,color:C.text2}}>{titles[view]}</span>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <Badge color="green">Live</Badge>
+            <span style={{fontSize:12,color:C.muted}}>23 เม.ย. 2026</span>
+          </div>
+        </div>
+        {/* Content */}
+        <div style={{flex:1,overflow:'hidden'}}>
+          {view==='dashboard'&&<DashboardView orders={orders} menu={menu}/>}
+          {view==='menu'&&<MenuView menu={menu} setMenu={setMenu}/>}
+          {view==='orders'&&<OrdersView orders={orders} setOrders={setOrders}/>}
+          {view==='pos'&&<OrderPage menu={menu} onPlaced={addOrder}/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

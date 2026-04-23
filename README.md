@@ -598,6 +598,40 @@ Client                        Backend                       MongoDB
 
 ---
 
+## UI Mockup
+
+ไฟล์ `mockup.html` ที่ root ของ repo คือ interactive mockup สำหรับ UI redesign รุ่นถัดไป
+
+**เปิดใช้งาน:** เปิดไฟล์ `mockup.html` ใน browser ได้เลย ไม่ต้องรัน server
+
+### Views ในไฟล์ mockup
+
+| View | คำอธิบาย |
+|------|----------|
+| Dashboard | Stat cards (รายรับ, ออเดอร์, สถานะ) + ตารางออเดอร์พร้อม totals footer |
+| จัดการเมนู | CRUD table, filter category, modal เพิ่ม/แก้ไข, confirm ลบ, toggle active/inactive |
+| รายการออเดอร์ | filter status, stat cards, toggle เสร็จ/ยังไม่เสร็จ, amber tint แถว pending |
+| สั่งเมนู (POS) | Menu grid, cart drawer slide-in, qty stepper, order confirm modal |
+
+ทุก view มี state จริงและ interactive — สั่งออเดอร์จากหน้า POS แล้วดูยอดอัปเดตที่หน้า Dashboard และ Orders ได้เลย
+
+### Design tokens ที่ใช้
+
+| Token | ค่า | ใช้กับ |
+|-------|-----|--------|
+| `--bg` | `#0c0c10` | พื้นหลังหลัก |
+| `--surface` | `#0f0f14` | Card / panel |
+| `--surface-2` | `#12121a` | Input / elevated |
+| `--border` | `#1e1e2a` | เส้นขอบทั้งหมด |
+| `--sidebar-bg` | `#080810` | Sidebar |
+| `--gold` | `#c9a96e` | Primary CTA / accent |
+| `--text` | `#e8e6f0` | ตัวหนังสือหลัก |
+| `--muted` | `#5a5870` | Label / placeholder |
+
+Font: **Inter** สำหรับตัวเลข, **Sarabun** สำหรับ label ภาษาไทย (แทน Georgia เดิม)
+
+---
+
 ## Roadmap
 
 ฟีเจอร์ที่วางแผนพัฒนาต่อ - เรียงตามลำดับความสำคัญ
